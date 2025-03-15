@@ -60,8 +60,8 @@
 
     - name: Clean up AWX admin password
       ansible.builtin.set_fact:
-        awx_admin_password: "{{ awx_admin_secret.stdout | regex_replace('\\s+$', '') }}"
-        
+        awx_admin_password: "{{ awx_admin_secret.stdout | regex_replace('\\\\n$', '') | regex_replace('\\s+$', '') }}"
+
     - name: Print AWX Admin Secret
       ansible.builtin.debug:
         msg: "AWX Admin Secret: {{ awx_admin_password }}"
