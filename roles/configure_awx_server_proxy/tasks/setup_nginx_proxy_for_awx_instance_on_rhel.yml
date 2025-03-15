@@ -86,37 +86,31 @@
 
 ############################
 
-    - name: Get AWX service details
-      ansible.builtin.shell: "kubectl get service awx-service -n awx -o jsonpath='{.spec.ports[0].port}'"
-      args:
-        executable: /bin/bash
-      register: service_port
+- name: Get AWX service details
+  ansible.builtin.shell: "kubectl get service awx-service -n awx -o jsonpath='{.spec.ports[0].port}'"
+  args:
+    executable: /bin/bash
+  register: service_port
 
-    - name: Print extracted service port
-      ansible.builtin.debug:
-        msg: "Extracted service port is {{ service_port.stdout }}"
-
-
-
-# - name: Extract last line from service output
-#   set_fact:
-#     last_line: "{{ awx_service_output.stdout_lines | last }}"
-
-# - name: Set awx_service_output port variable
-#   set_fact:
-#     awx_service_output: "{{ last_line | regex_replace('[^0-9]', '') }}"
+- name: Print extracted service port
+  ansible.builtin.debug:
+     msg: "Extracted service port is {{ service_port.stdout }}"
 
 
-# - name: Copy Over Custom Nginx config_files to /etc/nginx/conf.d/awx-ssl.conf
-#   ansible.builtin.template:
-#     src: "{{ role_path }}/files/awx-ssl.conf"
-#     dest: "/etc/nginx/conf.d/awx-ssl.conf"
 
 
-# - name: Copy Over Custom Nginx config_files to /etc/nginx/conf.d/awx-no-ssl.conf
-#   ansible.builtin.copy:
-#     src: "{{ role_path }}/files/awx-no-ssl.conf"
-#     dest: "/etc/nginx/conf.d/awx-no-ssl.conf"
+
+
+- name: Copy Over Custom Nginx config_files to /etc/nginx/conf.d/awx-ssl.conf
+  ansible.builtin.template:
+    src: "{{ role_path }}/files/awx-ssl.conf"
+    dest: "/etc/nginx/conf.d/awx-ssl.conf"
+
+
+- name: Copy Over Custom Nginx config_files to /etc/nginx/conf.d/awx-no-ssl.conf
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/awx-no-ssl.conf"
+    dest: "/etc/nginx/conf.d/awx-no-ssl.conf"
 
 
 
@@ -124,10 +118,10 @@
 
 
 
-# - name: Restart Nginx
-#   service:
-#     name: nginx
-#     state: restarted
+- name: Restart Nginx
+  service:
+    name: nginx
+    state: restarted
 
 
 
