@@ -1,4 +1,12 @@
 
+- name: Install Nginx Package
+  ansible.builtin.yum:
+    name: nginx
+    state: latest
+
+
+
+
 
 
 - name: Copy Over Custom Nginx config_files to /etc/nginx/conf.d/awx-ssl.conf

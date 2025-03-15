@@ -38,4 +38,4 @@
     - generate_self_signed_tls_certs_for_awx_server
     - awx_operator_setup
     - configure_standalone_awx_server
-    - configure_awx_server_proxy
+    # - configure_awx_server_proxy
