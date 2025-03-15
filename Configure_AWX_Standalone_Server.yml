@@ -1,6 +1,7 @@
 ---
 - name: Configure AWX Standalone Server
-  hosts: "{{ awx_single_node }}" 
+  # hosts: "{{ awx_single_node }}" 
+  hosts: localhost
   gather_facts: true
   become: true
   #Comment out vars_prompt entries to run playbook manually
