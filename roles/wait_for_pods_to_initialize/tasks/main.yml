@@ -1,0 +1,5 @@
+---
+
+- name: Include waiting_for_awx_instance_to_initialize.yml File
+  ansible.builtin.include_tasks:
+    file: waiting_for_awx_instance_to_initialize.yml
