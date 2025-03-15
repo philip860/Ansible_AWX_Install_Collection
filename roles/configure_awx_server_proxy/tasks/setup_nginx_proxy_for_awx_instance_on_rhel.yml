@@ -97,6 +97,9 @@
      msg: "Extracted service port is {{ awx_service_output.stdout }}"
 
 
+- name: Set awx_service_port variable
+  set_fact:
+    awx_service_port: "{{ awx_service_output.stdout }}"
 
 
 
