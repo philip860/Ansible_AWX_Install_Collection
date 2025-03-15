@@ -208,6 +208,8 @@
     - 6443
     - 51820
     - 5432
+    - 80
+    - 443
 
 #For Pods
 - name: Configure Firewall K3s Source Network-1
