@@ -66,18 +66,6 @@
     state: restarted
 
 
-- name: Copy Over Custom Nginx config_files to /etc/nginx/conf.d/awx-ssl.conf
-  ansible.builtin.template:
-    src: "{{ role_path }}/files/awx-ssl.conf"
-    dest: "/etc/nginx/conf.d/awx-ssl.conf"
-
-
-- name: Copy Over Custom Nginx config_files to /etc/nginx/conf.d/awx-no-ssl.conf
-  ansible.builtin.copy:
-    src: "{{ role_path }}/files/awx-no-ssl.conf"
-    dest: "/etc/nginx/conf.d/awx-no-ssl.conf"
-
-
 
 - name: Copy Self Generate SSL Cert To /etc/nginx/certs directory
   ansible.builtin.shell: cp -r /admin_tools/awx-operator/awx-deploy/tls.crt  /etc/nginx/certs/server.crt
@@ -91,19 +79,38 @@
     executable: /bin/bash
 
 
+
+
+- name: Get AWX service details
+  ansible.builtin.shell: kubectl get service -n awx
+  args:
+    executable: /bin/bash
+  register: awx_service_output
+
+
+
 - name: Extract last line from service output
   set_fact:
     last_line: "{{ awx_service_output.stdout_lines | last }}"
 
-- name: Extract service port
+- name: Set awx_service_output port variable
   set_fact:
-    service_port: "{{ last_line | regex_replace('[^0-9]', '') }}"
+    awx_service_output: "{{ last_line | regex_replace('[^0-9]', '') }}"
 
-- name: Update Nginx config
-  replace:
-    path: /etc/nginx/conf.d/awx-ssl.conf
-    regexp: '30190'
-    replace: "{{ service_port }}"
+
+- name: Copy Over Custom Nginx config_files to /etc/nginx/conf.d/awx-ssl.conf
+  ansible.builtin.template:
+    src: "{{ role_path }}/files/awx-ssl.conf"
+    dest: "/etc/nginx/conf.d/awx-ssl.conf"
+
+
+- name: Copy Over Custom Nginx config_files to /etc/nginx/conf.d/awx-no-ssl.conf
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/awx-no-ssl.conf"
+    dest: "/etc/nginx/conf.d/awx-no-ssl.conf"
+
+
+
 
 - name: Restart Nginx
   service:
