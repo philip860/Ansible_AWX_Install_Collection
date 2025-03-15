@@ -1,5 +1,0 @@
----
-- name: Configure_Node_For_AD_OU_Inventories.yml
-  ansible.builtin.include_tasks:
-    file: Configure_Node_For_AD_OU_Inventories.yml
-
