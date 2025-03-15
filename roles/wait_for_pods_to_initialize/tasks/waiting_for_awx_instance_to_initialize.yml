@@ -56,7 +56,7 @@
         kubectl -n awx get secret awx-admin-password -o go-template='{{'{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\\n"}}{{end}}'}}'
       register: awx_admin_secret
       changed_when: false
-      when: pod_status.stdout == "Succeeded" or pod_status.stdout == "Completed"
+      # when: pod_status.stdout == "Succeeded" or pod_status.stdout == "Completed"
 
     - name: Print AWX Admin Secret
       ansible.builtin.debug:
