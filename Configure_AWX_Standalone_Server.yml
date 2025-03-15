@@ -39,3 +39,4 @@
     - awx_operator_setup
     - configure_standalone_awx_server
     - configure_awx_server_proxy
+    - wait_for_pods_to_initialize
