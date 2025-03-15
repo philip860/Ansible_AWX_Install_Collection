@@ -1,0 +1,17 @@
+
+
+- name: Update all packages to their latest version
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+
+- name: Install the Necessary Packages required to run AWX Server
+  ansible.builtin.apt:
+    name:
+      - curl
+      - wget
+      - openssh-server
+      - git
+      - make
+
+

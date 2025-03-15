@@ -1,0 +1,5 @@
+---
+- name: Configure_awx_operator.yml
+  ansible.builtin.include_tasks:
+    file: Configure_awx_operator.yml
+

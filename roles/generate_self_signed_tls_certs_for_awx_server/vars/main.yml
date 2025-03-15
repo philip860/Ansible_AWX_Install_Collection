@@ -1,0 +1,8 @@
+---
+#Sectigo Acme API Login Credentials
+customerURI:
+sectigo_user:
+sectigo_password:
+certbot_plugin:
+acme_domain:
+hostname_awx_check_var: "{{ ansible_hostname }}.awx.its.uconn.edu"

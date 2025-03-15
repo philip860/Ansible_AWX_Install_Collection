@@ -1,0 +1,46 @@
+- name: Install k3s & Start it No Docker
+  ansible.builtin.shell: curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
+  args:
+    executable: /bin/bash
+
+- name: Set Permissions On Rancher Files
+  ansible.builtin.shell: chmod 644 /etc/rancher/k3s/k3s.yaml
+  args:
+    executable: /bin/bash
+
+- name: Set variable for $HOME/.kube/config directory
+  stat:
+    path:  "/root/.kube/"
+  register:  kube_config_dir_check
+
+- name: Create the $HOME/.kube/config directory if it is not present
+  ansible.builtin.file:
+    path: "/root/.kube/"
+    state: directory
+    mode: '0755'
+    recurse: yes
+  when: not kube_config_dir_check.stat.exists == true
+
+- name: Set variable for $HOME/.kube/config File
+  stat:
+    path:  "/root/.kube/config"
+  register:  kube_config_file_check
+
+- name: Create the $HOME/.kube/config file if it is not present
+  ansible.builtin.copy:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: /root/.kube/config
+    remote_src: yes
+  when: not kube_config_file_check.stat.exists == true
+
+- name: Set Permissions On kubectl executable
+  ansible.builtin.shell: chmod +x /usr/local/bin/kubectl
+  args:
+   executable: /bin/bash
+
+
+- name: Create Kubectl Symbolic Link
+  ansible.builtin.file: 
+    src: "/usr/local/bin/kubectl"
+    dest: '/usr/bin/kubectl'
+    state: link

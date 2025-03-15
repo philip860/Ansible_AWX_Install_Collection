@@ -1,0 +1,36 @@
+---
+apiVersion: awx.ansible.com/v1beta1
+kind: AWX
+metadata:
+  name: awx
+  namespace: awx
+spec:
+  
+  # Set the replicas count to scale AWX pods
+  #replicas: 3
+  
+  admin_user: admin
+  admin_password_secret: awx-admin-password
+
+  ingress_type: ingress
+  ingress_tls_secret: awx-secret-tls
+  hostname: ansible_fqdn  
+  
+  postgres_configuration_secret: awx-postgres-configuration
+
+  postgres_storage_class: awx-postgres-volume
+  postgres_storage_requirements:
+    requests:
+      storage: 20Gi
+
+  projects_persistence: true
+  projects_existing_claim: awx-projects-claim
+  
+  postgres_init_container_resource_requirements: {}
+  postgres_resource_requirements: {}
+  web_resource_requirements: {}
+  task_resource_requirements: {}
+  ee_resource_requirements: {}
+ 
+  secret_key_secret: custom-awx-secret-key
+

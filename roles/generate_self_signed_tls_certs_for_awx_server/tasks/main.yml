@@ -1,0 +1,5 @@
+---
+- name: Generate Self Signed Certs
+  ansible.builtin.include_tasks:
+    file: Self_Sign_Cert_Generation.yml
+

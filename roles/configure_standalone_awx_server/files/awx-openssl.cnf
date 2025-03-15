@@ -1,0 +1,28 @@
+[req]
+default_bits            = 4096
+distinguished_name      =  req_distinguished_name
+req_extensions          = req_ext
+prompt                  = no
+
+[req_distinguished_name]
+0.countryName                   = US
+0.stateOrProvinceName           = CT
+0.localityName                  = Storrs
+0.organizationName              = UConn
+0.organizationalUnitName        = ITS
+
+commonName                      = awx.uconn.edu
+emailAddress                    = iam@uconn.edu
+
+[req_ext]
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = awx-msb-0.grove.ad.uconn.edu
+DNS.2 = awx-msb-1.grove.ad.uconn.edu
+DNS.3 = awx-msb-2.grove.ad.uconn.edu
+DNS.4 = awx-msb-3.grove.ad.uconn.edu
+DNS.5 = awx-msb-4.grove.ad.uconn.edu
+DNS.5 = awx-msb-5.grove.ad.uconn.edu

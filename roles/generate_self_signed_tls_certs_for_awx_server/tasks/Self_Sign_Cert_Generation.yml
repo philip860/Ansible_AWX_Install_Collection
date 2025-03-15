@@ -1,0 +1,30 @@
+
+- name: Create the /etc/letsencrypt/archive/directory if it is not present
+  ansible.builtin.file:
+    path: "/etc/letsencrypt/archive/{{ ansible_nodename }}"
+    state: directory
+    mode: '0755'
+    recurse: yes
+
+- name: Generate an OpenSSL private key with the default values (4096 bits, RSA) and a passphrase
+  community.crypto.openssl_privatekey:
+    path: "/etc/letsencrypt/archive/{{ ansible_nodename }}/privkey1.pem"
+
+- name: Create certificate signing request (CSR) for self-signed certificate
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: "/etc/letsencrypt/archive/{{ ansible_nodename }}/privkey1.pem"
+    common_name: "{{ ansible_hostname }}"
+    organization_name: "ansible automation"
+    subject_alt_name:
+      - "DNS:{{ ansible_fqdn }}"
+      - "DNS:{{ ansible_nodename }}"
+  register: csr
+
+- name: Create self-signed certificate from CSR
+  community.crypto.x509_certificate:
+    path: "/etc/letsencrypt/archive/{{ ansible_nodename }}/cert1.pem"
+    csr_content: "{{ csr.csr }}"
+    privatekey_path: "/etc/letsencrypt/archive/{{ ansible_nodename }}/privkey1.pem"
+    provider: selfsigned
+
+

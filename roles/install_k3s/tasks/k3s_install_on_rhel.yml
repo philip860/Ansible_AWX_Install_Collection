@@ -1,0 +1,146 @@
+
+#In Order to get the k3s-service running correctly on RHEL9 a few services need to be disabled 
+- name: Disable nm-cloud-setup service on RHEL9 Disable 
+  ansible.builtin.systemd:
+    name: nm-cloud-setup
+    state: stopped
+    enabled: false
+  when: ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "9"
+
+- name: Disable nm-cloud-setup.timer service on RHEL9 Disable 
+  ansible.builtin.systemd:
+    name: nm-cloud-setup.timer
+    state: stopped
+    enabled: false
+  when: ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "9"
+
+- name: Restart Server
+  ansible.builtin.shell: "reboot"
+  args:
+    executable: /bin/bash
+  async: 35
+  poll: 0
+  when: ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "9"
+  
+- name: Wait for system to become reachable over SSH
+  ansible.builtin.wait_for_connection:
+    connect_timeout: 10
+    delay: 5
+    timeout: 420
+  when: ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "9"
+
+
+#Starting the K3s install
+- name: "Install k3s"
+  block:
+
+    - name: Install k3s & Start it No Docker
+      ansible.builtin.shell: curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
+      args:
+        executable: /bin/bash
+
+    - name: Set Permissions On Rancher Files
+      ansible.builtin.shell: chmod 644 /etc/rancher/k3s/k3s.yaml
+      args:
+        executable: /bin/bash
+
+    - name: Set variable for $HOME/.kube/config directory
+      stat:
+        path:  "/root/.kube/"
+      register:  kube_config_dir_check
+
+    - name: Create the $HOME/.kube/config directory if it is not present
+      ansible.builtin.file:
+        path: "/root/.kube/"
+        state: directory
+        mode: '0755'
+        recurse: yes
+      when: not kube_config_dir_check.stat.exists == true
+       
+    - name: Set Permissions On kubectl executable
+      ansible.builtin.shell: chmod +x /usr/local/bin/kubectl
+      args:
+       executable: /bin/bash
+
+    - name: Create Kubectl Symbolic Link
+      ansible.builtin.file: 
+        src: "/usr/local/bin/kubectl"
+        dest: '/usr/bin/kubectl'
+        state: link
+
+     
+
+  #Fixing Bug with k3s not installing correctly 
+  rescue:
+    - name: Error Occured
+      debug: 
+        msg: "There was an issue with trying to install k3s...trying again"
+
+    - name: Set variable for /awx_install_files directory
+      stat:
+        path:  "/awx_install_files"
+      register: awx_install_files_dir_check
+
+    - name: Create the /awx_install_files if it is not present
+      ansible.builtin.file:
+        path: "/awx_install_files"
+        state: directory
+        mode: '0755'
+        recurse: yes
+      when: not awx_install_files_dir_check.stat.exists == true
+
+    - name: Copy over custom k3s.service File
+      ansible.builtin.copy:
+        src: "{{ role_path }}/files/updated-k3s.service"
+        dest: "/awx_install_files"
+
+
+    - name: Update  /etc/systemd/system/k3s.service File
+      ansible.builtin.shell: "cat updated-k3s.service > /etc/systemd/system/k3s.service"
+      args:
+       executable: /bin/bash
+       chdir: "/awx_install_files"
+
+
+    - name: Restart k3s service
+      ansible.builtin.systemd: 
+        name: k3s
+        state: restarted
+        enabled: true
+        daemon_reload: true
+
+
+    - name: Set Permissions On Rancher Files
+      ansible.builtin.shell: chmod 644 /etc/rancher/k3s/k3s.yaml
+      args:
+        executable: /bin/bash
+
+    - name: Set variable for $HOME/.kube/config directory
+      stat:
+        path:  "/root/.kube/"
+      register:  kube_config_dir_check
+
+    - name: Create the $HOME/.kube/config directory if it is not present
+      ansible.builtin.file:
+        path: "/root/.kube/"
+        state: directory
+        mode: '0755'
+        recurse: yes
+      when: not kube_config_dir_check.stat.exists == true
+       
+    - name: Set Permissions On kubectl executable
+      ansible.builtin.shell: chmod +x /usr/local/bin/kubectl
+      args:
+       executable: /bin/bash
+
+    - name: Create Kubectl Symbolic Link
+      ansible.builtin.file: 
+        src: "/usr/local/bin/kubectl"
+        dest: '/usr/bin/kubectl'
+        state: link
+
+
+    - name: Delete the /awx_install_files Directory
+      ansible.builtin.file:
+        path: "/awx_install_files/"
+        state: absent

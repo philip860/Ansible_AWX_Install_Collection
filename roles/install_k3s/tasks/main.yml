@@ -1,0 +1,14 @@
+---
+#We will install the nescessary packages required to run 
+#The k3s Service on RHEL 8 & Ubuntu
+
+- name: Include k3s_install install
+  ansible.builtin.include_tasks:
+    file: k3s_install_on_rhel.yml
+  when: ('RedHat' in ansible_os_family ) or ('CentOS' in ansible_os_family )
+
+
+- name: Include k3s_install_on_ubuntu.yml File - ( Ubuntu Install )
+  ansible.builtin.include_tasks:
+    file: k3s_install_on_ubuntu.yml
+  when: ('Ubuntu' in ansible_distribution )

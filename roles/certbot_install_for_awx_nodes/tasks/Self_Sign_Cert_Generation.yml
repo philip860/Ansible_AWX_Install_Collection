@@ -1,0 +1,339 @@
+
+
+- name: Create the ITS_tools httpd directory if it is not present
+  ansible.builtin.file:
+    path: "/ITS_tools/httpd_install"
+    state: directory
+    mode: '0755'
+    recurse: yes
+  when:  (certbot_plugin == "apache")
+
+
+- name: Change Current hostname if FQDN Detected Ends In .awx.its.uconn.edu
+  ansible.builtin.hostname:
+    name: "{{ ansible_hostname }}.grove.ad.uconn.edu"
+    use: systemd
+  when:  (hostname_awx_check_var == ansible_fqdn)
+
+- name: Install the Necessary Packages required to run AWX Server Server
+  yum:
+    name:
+      - git
+      - openssl-devel
+      - open-vm-tools
+      - net-tools
+      - pam-devel
+      - gcc
+      - gcc-c++
+      - httpd
+      - mod_ssl
+      - nginx
+      - python3-cryptography
+
+
+#We will Configure Apache Server for use with AWX Server Instance
+#Based off of the user's desired preference
+- name: Create the /etc/httpd/sites-available directories
+  ansible.builtin.file:
+    path: "/etc/httpd/sites-available"
+    state: directory
+    owner: apache
+    group: apache
+    mode: '0755'
+    recurse: yes
+  when:  (certbot_plugin == "apache")
+
+- name: Create the /etc/httpd/sites-available directories
+  ansible.builtin.file:
+    path: "/etc/httpd/sites-enabled"
+    state: directory
+    owner: apache
+    group: apache
+    mode: '0755'
+    recurse: yes
+  when:  (certbot_plugin == "apache")
+
+- name: Create the /var/www/{{ ansible_hostname }} Directory
+  ansible.builtin.file:
+    path: "/var/www/{{ ansible_hostname }}"
+    state: directory
+    owner: apache
+    group: apache
+    mode: '0755'
+    recurse: yes
+  when:  (certbot_plugin == "apache")
+
+- name: Copy apache_ssl.conf File to /ITS_tools/httpd_install Directory from Ansible Controller
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/apache_ssl.conf"
+    dest: "/ITS_tools/httpd_install/apache_ssl.conf"
+  when:  (certbot_plugin == "apache")
+
+
+- name: Copy apache_index.html File to /ITS_tools/httpd_install Directory from Ansible Controller
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/apache_index.html"
+    dest: "/ITS_tools/httpd_install/apache_index.html"
+  when:  (certbot_plugin == "apache")
+
+
+- name: Copy apache_hostname.conf File to /ITS_tools/httpd_install Directory from Ansible Controller
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/apache_hostname.conf"
+    dest: "/ITS_tools/httpd_install/apache_hostname.conf"
+  when:  (certbot_plugin == "apache")
+
+- name: Copy ssl.conf File
+  ansible.builtin.copy:
+    src: "/ITS_tools/httpd_install/apache_ssl.conf"
+    dest: "/etc/httpd/conf.d/ssl.conf"
+    remote_src: yes
+  when:  (certbot_plugin == "apache")
+
+
+- name: Copy apache_hostname.conf File
+  ansible.builtin.copy:
+    src: "/ITS_tools/httpd_install/apache_hostname.conf"
+    dest: "/etc/httpd/conf.d/{{ ansible_nodename }}.conf"
+    remote_src: yes
+  when:  (certbot_plugin == "apache")
+
+- name: Enter in Server Alias in /etc/httpd/conf.d/ssl.conf
+  replace:
+    path: /etc/httpd/conf.d/ssl.conf
+    regexp: 'ITS-HOST'
+    replace: "{{ ansible_nodename  }}"
+  when:  (certbot_plugin == "apache")
+
+- name: Enter in Server Alias in /etc/httpd/conf.d/{{ ansible_nodename }}
+  replace:
+    path: "/etc/httpd/conf.d/{{ ansible_nodename }}.conf"
+    regexp: 'ITS-HOST'
+    replace: "{{ ansible_nodename  }}"
+  when:  (certbot_plugin == "apache")
+
+- name: Create a symbolic link in sites-enabled
+  ansible.builtin.file:
+    src: "/etc/httpd/conf.d/{{ ansible_nodename }}.conf"
+    dest: "/etc/httpd/sites-enabled/{{ ansible_nodename }}.conf"
+    owner: apache
+    group: apache
+    state: link
+  when:  (certbot_plugin == "apache")
+
+- name: Create a symbolic link in sites-available
+  ansible.builtin.file:
+    src: "/etc/httpd/conf.d/{{ ansible_nodename }}.conf"
+    dest: "/etc/httpd/sites-available/{{ ansible_nodename }}.conf"
+    owner: apache
+    group: apache
+    state: link
+  when:  (certbot_plugin == "apache")
+
+#Here we will set the httpd sever's configuration
+- name: Set variable for /etc/pki/httpd/
+  stat:
+    path: "/etc/pki/httpd/"
+  register: etc_pki_httpd_dir_check
+  when:  (certbot_plugin == "apache")
+
+- name: Create the /etc/pki/httpd/ if it is not present
+  ansible.builtin.file:
+    path: "/etc/pki/httpd/"
+    state: directory
+    mode: '0755'
+    recurse: yes
+  when: (certbot_plugin == "apache")
+
+- name: Generate an OpenSSL private key with the default values (4096 bits, RSA) and a passphrase
+  community.crypto.openssl_privatekey:
+    path: /etc/pki/httpd/server.key
+  when:  (certbot_plugin == "apache")
+
+- name: Create certificate signing request (CSR) for self-signed certificate
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: /etc/pki/httpd/server.key
+    common_name: "{{ ansible_hostname }}.grove.ad.uconn.edu"
+    organization_name: "University of Connecticut"
+    subject_alt_name:
+      - "DNS:{{ ansible_fqdn }}"
+      - "DNS:{{ ansible_nodename }}"
+  register: csr
+  when:  (certbot_plugin == "apache")
+
+- name: Create self-signed certificate from CSR
+  community.crypto.x509_certificate:
+    path: /etc/pki/httpd/server.crt
+    csr_content: "{{ csr.csr }}"
+    privatekey_path: /etc/pki/httpd/server.key
+    provider: selfsigned
+  when:  (certbot_plugin == "apache")
+
+- name: Permit traffic in default zone for https service
+  ansible.posix.firewalld:
+    service: https
+    permanent: yes
+    immediate: yes
+    state: enabled
+  when:  (certbot_plugin == "apache")
+
+- name: Permit traffic in default zone for http service
+  ansible.posix.firewalld:
+    service: http
+    permanent: yes
+    immediate: yes
+    state: enabled
+  when:  (certbot_plugin == "apache")
+
+- name: Permit traffic on default zone on port 443/tcp
+  ansible.posix.firewalld:
+    port: 443/tcp
+    permanent: yes
+    zone: public
+    immediate: yes
+    state: enabled
+
+- name: Permit traffic on default zone on port 80/tcp
+  ansible.posix.firewalld:
+    port: 80/tcp
+    permanent: yes
+    zone: public
+    immediate: yes
+    state: enabled
+
+- name: Create the /var/www/{{ ansible_nodename  }}/html
+  ansible.builtin.file:
+    path: "/var/www/{{ ansible_nodename  }}/html"
+    state: directory
+    mode: '0755'
+    owner: apache
+    group: apache
+    recurse: yes
+  when:  (certbot_plugin == "apache")
+
+- name: Create the /var/www/{{ ansible_nodename  }}/log
+  ansible.builtin.file:
+    path: "/var/www/{{ ansible_nodename  }}/log"
+    state: directory
+    mode: '0755'
+    owner: apache
+    group: apache
+    recurse: yes
+  when:  (certbot_plugin == "apache")
+
+
+- name: Copy  Custom apache_index.html File  Over
+  ansible.builtin.copy:
+    src: "/ITS_tools/httpd_install/apache_index.html"
+    dest: "/var/www/{{ ansible_nodename  }}/html/index.html"
+    owner: apache
+    group: apache
+    remote_src: yes
+  when:  (certbot_plugin == "apache")
+
+
+- name: Need to Fix Platform Python Setup Tools
+  ansible.builtin.shell:  dnf reinstall python3-setuptools -y && dnf reinstall platform-python-setuptools -y
+  args:
+    executable: /bin/bash
+  when:  (certbot_plugin == "apache")
+
+
+- name: Fix SELinux Permissions on /var/www/{{ ansible_nodename }} Directory
+  ansible.builtin.shell:  semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/{{ ansible_nodename }}' && restorecon -v '/var/www/{{ ansible_nodename }}/log' && setsebool -P httpd_unified 1
+  args:
+    executable: /bin/bash
+  when:  (certbot_plugin == "apache")
+
+
+
+##### If Apache isn't Picked to be used for the certbot_plugin, then nginx will be used
+
+
+- name: Create the ITS_tools httpd directory if it is not present
+  ansible.builtin.file:
+    path: "/ITS_tools/nginx_install"
+    state: directory
+    mode: '0755'
+    recurse: yes
+  when:  (certbot_plugin == "nginx")
+
+
+- name: Copy nginx.conf File to /ITS_tools/nginx_install Directory from Ansible Controller
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/nginx.conf"
+    dest: "/ITS_tools/nginx_install/nginx.conf"
+  when:  (certbot_plugin == "nginx")
+
+
+- name: Copy nginx_nossl.conf File to /ITS_tools/nginx_install Directory from Ansible Controller
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/nginx_nossl.conf"
+    dest: "/ITS_tools/nginx_install/nginx_nossl.conf"
+  when:  (certbot_plugin == "nginx")
+
+
+- name: Copy nginx_ssl.conf File to /ITS_tools/nginx_install Directory from Ansible Controller
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/nginx_ssl.conf"
+    dest: "/ITS_tools/nginx_install/nginx_ssl.conf"
+  when:  (certbot_plugin == "nginx")
+
+
+- name: Configure nginx Service
+  ansible.builtin.shell: cat /ITS_tools/nginx_install/nginx.conf > /etc/nginx/nginx.conf
+  args:
+    executable: /bin/bash
+  when:  (certbot_plugin == "nginx")
+
+
+- name: Copy Over nginx_nossl.conf File
+  ansible.builtin.copy:
+    src: "/ITS_tools/nginx_install/nginx_nossl.conf"
+    dest: "/etc/nginx/conf.d/nossl.conf"
+    remote_src: yes
+  when:  (certbot_plugin == "nginx")
+
+
+- name: Copy Over nginx_ssl.conf File
+  ansible.builtin.copy:
+    src: "/ITS_tools/nginx_install/nginx_ssl.conf"
+    dest: "/etc/nginx/conf.d/ssl.conf"
+    remote_src: yes
+  when:  (certbot_plugin == "nginx")
+
+
+- name: Create /etc/pki/nginx Directory
+  ansible.builtin.file:
+    path: "/etc/pki/nginx/"
+    state: directory
+    recurse: yes
+  when:  (certbot_plugin == "nginx")
+
+
+- name: Generate an OpenSSL private key with the default values (4096 bits, RSA) and a passphrase
+  community.crypto.openssl_privatekey:
+    path: /etc/pki/nginx/server.key
+  when:  (certbot_plugin == "nginx")
+
+
+- name: Create certificate signing request (CSR) for self-signed certificate
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: /etc/pki/nginx/server.key
+    common_name: "{{ ansible_hostname }}.grove.ad.uconn.edu"
+    organization_name: "University of Connecticut"
+    subject_alt_name:
+      - "DNS:{{ ansible_fqdn }}"
+      - "DNS:{{ ansible_nodename }}"
+  register: csr
+  when:  (certbot_plugin == "nginx")
+
+
+- name: Create self-signed certificate from CSR
+  community.crypto.x509_certificate:
+    path: /etc/pki/nginx/server.crt
+    csr_content: "{{ csr.csr }}"
+    privatekey_path: /etc/pki/nginx/server.key
+    provider: selfsigned
+  when:  (certbot_plugin == "nginx")
+

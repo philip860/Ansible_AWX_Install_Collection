@@ -1,0 +1,12 @@
+---
+
+- name: Include setup_stand_alone_awx_instance.yml File - ( RHEL Install )
+  ansible.builtin.include_tasks:
+    file: setup_stand_alone_awx_instance_on_rhel.yml
+  when: ('RedHat' in ansible_os_family ) or ('CentOS' in ansible_os_family )
+
+
+- name: Include setup_stand_alone_awx_instance_on_ubuntu.yml File - ( Ubuntu Install )
+  ansible.builtin.include_tasks:
+    file: setup_stand_alone_awx_instance_on_ubuntu.yml
+  when: ('Ubuntu' in ansible_distribution )

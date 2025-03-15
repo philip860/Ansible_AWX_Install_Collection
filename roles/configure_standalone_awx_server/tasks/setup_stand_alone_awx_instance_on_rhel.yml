@@ -1,0 +1,374 @@
+- name: Permit traffic in default zone on port 5432/tcp For External Postgres Server
+  ansible.posix.firewalld:
+    port: 5432/tcp
+    permanent: yes
+    immediate: yes
+    state: enabled
+
+
+
+- name: Set variable for ITS tools directory
+  stat:
+    path: "/admin_tools"
+  register:  admin_tools_dir_check
+
+- name: Create the ITS_tools directory if it is not present
+  ansible.builtin.file:
+    path: "/admin_tools"
+    state: directory
+    mode: '0755'
+    recurse: yes
+  when: not admin_tools_dir_check.stat.exists == true
+
+
+
+- name: Copy Over Custom config_files to /admin_tools/awx-operator
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/config_files"
+    dest: "/admin_tools/awx-operator"
+
+
+
+- name: Copy Over Custom http_redirect to /admin_tools/awx-operator
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/http_redirect"
+    dest: "/admin_tools/awx-operator"
+   
+
+#- name: Copy Over Custom awx-deploy to /admin_tools/awx-operator
+#  ansible.builtin.copy:
+#    src: "/admin_tools/awx-deploy"
+#    dest: "/admin_tools/awx-operator"
+#    remote_src: yes 
+
+
+- name: Create the ITS_tools Git Download Directory
+  ansible.builtin.file:
+    path: "/admin_tools/Git"
+    state: directory
+    mode: '0755'
+    recurse: yes
+
+
+
+- name: Create Namespace for AWX Operator Pt.1
+  ansible.builtin.shell:  export NAMESPACE=awx
+  args:
+    executable: /bin/bash
+
+- name: Create Namespace for AWX Operator Pt.2
+  ansible.builtin.shell:  /usr/local/bin/kubectl  create ns awx
+  args:
+    executable: /bin/bash
+  ignore_errors: true
+
+- name: Create Namespace for AWX Operator Pt.3
+  ansible.builtin.shell:  /usr/local/bin/kubectl  config set-context --current --namespace=awx
+  args:
+    executable: /bin/bash
+  ignore_errors: true
+
+#- name: Set the Hostname of the System In AWX Config File
+#  ansible.builtin.shell:  python3 set_hostname_for_AWX_Server.py
+#  args:
+#    executable: /bin/bash
+#    chdir: /admin_tools/awx-operator/config_files
+
+- name: Create Required Persistent Volume Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0775
+  loop:
+    - /var/lib/awx/postgres
+    - /var/lib/awx/projects
+
+- name: Set /data/projects Directory Permissions
+  ansible.builtin.shell: chown 1000:0 /var/lib/awx/projects
+  args:
+    executable: /bin/bash
+
+
+- name: Modify /admin_tools/awx-operator/Makefile File
+  replace:
+    path: "/admin_tools/awx-operator/Makefile"
+    regexp: 'kubectl'
+    replace: "/usr/local/bin/kubectl"
+
+- name: Deploy AWX Operator
+  ansible.builtin.shell:  make deploy
+  args:
+    executable: /bin/bash
+    chdir: /admin_tools/awx-operator
+
+
+- name: Need to Move Over TLS Cert From  /etc/letsencrypt directory
+  ansible.builtin.shell:  "cp -r /etc/letsencrypt/archive/{{ ansible_nodename }}/cert1.pem /admin_tools/awx-operator/awx-deploy/tls.crt" 
+  args:
+    executable: /bin/bash
+
+- name: Need to Move Over TLS Private Key From  /etc/letsencrypt directory
+  ansible.builtin.shell:  "cp -r /etc/letsencrypt/archive/{{ ansible_nodename }}/privkey1.pem /admin_tools/awx-operator/awx-deploy/tls.key" 
+  args:
+    executable: /bin/bash
+
+
+- name: Generate SSL Cert YAML File
+  ansible.builtin.shell: "/usr/local/bin/kubectl -n awx create secret tls awx-secret-tls --cert=tls.crt --key=tls.key --dry-run=client -o yaml"
+  args:
+    executable: /bin/bash
+    chdir: /admin_tools/awx-operator/awx-deploy
+  register: ssl_certs_output
+
+#Need to fix variable to extra SSL Cert List Conversion
+- name: Get SSL Cert
+  no_log: true
+  set_fact:
+    ssl_cert_variable_list: "{{ ssl_certs_output.stdout_lines |  join(',') }}"
+
+
+#Need to fix variable to remove Unnecessary Info From SSL Cert List Conversion Pt.1
+- name: Editing ssl_cert_variable_list and creating ssl_cert_variable_edit1
+  no_log: true
+  set_fact:
+    ssl_cert_variable_edit1: "{{ ssl_cert_variable_list | regex_findall('.*tls.key' ) }}"
+
+
+#Need to fix variable to remove Unnecessary Info From SSL Cert List Conversion  Pt.2
+- name: Editing ssl_cert_variable_edit1 and creating ssl_cert_variable_edit2
+  no_log: true
+  set_fact:
+    ssl_cert_variable_edit2: "{{ ssl_cert_variable_edit1 | regex_findall('tls.crt.*' ) | replace('tls.key', '') | replace(',', '')  | replace(',', '') | replace(\"'\",'')  | replace('  ]','') | replace('tls.crt:','') | replace(' ','') | trim }}"
+
+
+- name: Entering a ssl_cert_variable_edit2 Into secret File
+  replace:
+    path: "/admin_tools/awx-operator/awx-deploy/secret.yaml"
+    regexp: 'SSL_CERT'
+    replace: "{{  ssl_cert_variable_edit2[0] }}"
+
+
+#Need to fix variable to extra SSL Cert List Conversion
+- name: Get SSL Cert Private Key
+  no_log: true
+  set_fact:
+    ssl_cert_private_key_variable_list: "{{ ssl_certs_output.stdout_lines |  join(',') }}"
+
+
+#Need to fix variable to remove Unnecessary Info From SSL Cert  Private Key List Conversion Pt.1
+- name: Editing ssl_cert_private_key_variable_list and  ssl_cert_private_key_variable_edit1
+  no_log: true
+  set_fact:
+   ssl_cert_private_key_variable_edit1: "{{ ssl_cert_private_key_variable_list | regex_findall('tls.key.*' ) }}"
+
+#Need to fix variable to remove Unnecessary Info From SSL Cert  Private Key List Conversion Pt.1
+- name: Editing ssl_cert_private_key_variable_edit1 and  ssl_cert_private_key_variable_edit2
+  no_log: true
+  set_fact:
+   ssl_cert_private_key_variable_edit2: "{{ ssl_cert_private_key_variable_edit1 | regex_findall('.*kind' )  | replace(',', '') | replace(\"'\",'')  | replace('[tls.key:','') | replace('kind', '') | replace(' ', '') }}"
+
+
+- name: Entering ssl_cert_private_key_variable_edit2 Into secret File
+  replace:
+    path: "/admin_tools/awx-operator/awx-deploy/secret.yaml"
+    regexp: 'SSL_KEY'
+    replace: "{{  ssl_cert_private_key_variable_edit2[0] }}"
+
+
+- name: Entering a awx_admin_username Into secret File
+  replace:
+    path: "/admin_tools/awx-operator/awx-deploy/secret.yaml"
+    regexp: 'iam_password'
+    replace: "{{ awx_admin_username }}"
+
+
+- name: Entering a secret_key Into secret File
+  replace:
+    path: "/admin_tools/awx-operator/awx-deploy/secret.yaml"
+    regexp: 'super_secure_secretkey'
+    replace: "{{ secret_key }}"
+
+
+- name: Configure Firewall Ports For Kubernetes
+  ansible.posix.firewalld:
+    port: "{{ item }}/tcp"
+    permanent: true
+    state: enabled
+    immediate: true
+  loop:
+    - 8443
+    - 8080
+    - 10250
+    - 10248
+    - 2379-2380
+    - 10259
+    - 10255
+    - 6443
+    - 51820
+    - 5432
+
+#For Pods
+- name: Configure Firewall K3s Source Network-1
+  ansible.posix.firewalld:
+    source: 10.42.0.0/16
+    zone: trusted
+    state: enabled
+    permanent: true
+    immediate: true
+
+#For services
+- name: Configure Firewall K3s Source Network-2
+  ansible.posix.firewalld:
+    source: 10.43.0.0/16
+    zone: trusted
+    state: enabled
+    permanent: true
+    immediate: true
+
+
+- name: Deploy AWX
+  ansible.builtin.shell: cd /admin_tools/awx-operator &&  /usr/local/bin/kubectl apply -k awx-deploy
+  args:
+    executable: /bin/bash
+    
+- name: Apply AWX Secrets
+  ansible.builtin.shell: /usr/local/bin/kubectl apply -f secret.yaml
+  args:
+    executable: /bin/bash
+    chdir: /admin_tools/awx-operator/awx-deploy    
+     
+    
+
+- name: Waiting 30 Seconds For Previous Command
+  ansible.builtin.shell:  /bin/sleep 30
+  args:
+    executable: /bin/bash
+
+
+
+
+- name: Waiting 30 Seconds For Previous Command
+  ansible.builtin.shell:  /bin/sleep 30
+  args:
+    executable: /bin/bash
+
+- name: Going to Delete Default v1beta1.metrics.k8s.io components file
+  ansible.builtin.shell:  /usr/local/bin/kubectl delete -f components-default.yaml
+  args:
+    executable: /bin/bash
+    chdir: /admin_tools/awx-operator/config_files
+
+- name: Going to Add Custom v1beta1.metrics.k8s.io components file
+  ansible.builtin.shell:  /usr/local/bin/kubectl apply -f metrics-components-edited.yaml
+  args:
+    executable: /bin/bash
+    chdir: /admin_tools/awx-operator/config_files
+
+- name: Prepare Traefik for HTTP Redirection
+  ansible.builtin.shell:  /usr/local/bin/kubectl -n default apply -f middleware.yaml
+  args:
+    executable: /bin/bash
+    chdir: /admin_tools/awx-operator/http_redirect
+
+- name: Enable masquerade for Public Zone for http service
+  ansible.posix.firewalld:
+    masquerade: yes
+    state: enabled
+    permanent: yes
+    immediate: yes
+    zone: public
+
+#- name: Set the IP Address,Hostname, & FDQN In /etc/hosts File
+#  ansible.builtin.shell:  python3 GET_IP_Address.py
+#  args:
+#    executable: /bin/bash
+#    chdir: /admin_tools/awx-operator/config_files
+
+- name: Waiting 30 Seconds For Pods To Initialize
+  ansible.builtin.shell:  /bin/sleep 30
+  args:
+    executable: /bin/bash
+
+
+- name: Patch AWX Instance To Allow for HTTP Redirection
+  ansible.builtin.shell: bash /admin_tools/awx-operator/http_redirect/patch_awx_for_https.sh
+  args:
+    executable: /bin/bash
+    
+    
+- name: Waiting 10 Seconds For Pods To Initialize After Patch
+  ansible.builtin.shell:  /bin/sleep 10
+  args:
+    executable: /bin/bash
+
+- name: Create a AWX user
+  user:
+   name: awx
+   password: "{{ awx_user_password_var | password_hash('sha512') }}"
+   state: present
+   shell: /bin/bash
+   system: no
+   createhome: yes
+   home: /home/awx
+
+
+
+- name: Export AWX NameSpace To AWX User Bash Profile
+  become: true
+  become_user: awx
+  ansible.builtin.shell: echo 'export NAMESPACE=awx' >>  ~/.bashrc
+  args:
+    executable: /bin/bash
+
+- name: Going to Delete Default v1beta1.metrics.k8s.io components file (2nd Time Running This Task)
+  ansible.builtin.shell:  /usr/local/bin/kubectl delete -f components-default.yaml
+  args:
+    executable: /bin/bash
+    chdir: /admin_tools/awx-operator/config_files
+
+- name: Going to Add Custom v1beta1.metrics.k8s.io components file (2nd Time Running This Task)
+  ansible.builtin.shell:  /usr/local/bin/kubectl apply -f metrics-components-edited.yaml
+  args:
+    executable: /bin/bash
+    chdir: /admin_tools/awx-operator/config_files/
+
+
+- name: Create the ITS_tools Git Download Directory
+  ansible.builtin.file:
+    path: "/admin_tools/standalone_awx_server_creds"
+    state: directory
+    mode: '0755'
+    recurse: true 
+
+- name: Enter in AWX Creds into /admin_tools/standalone_awx_server_creds/creds.txt File
+  ansible.builtin.copy:
+    content: |
+      Ansible AWX Postgres DB Password={{ awx_postgres_db_password }}
+      Ansible AWX Secret Key={{ secret_key }}
+      Ansible AWX Web UI Admin Username={{ awx_admin_username }}
+      Ansible AWX Web UI Admin Password={{ awx_admin_username_password }}
+    dest: /admin_tools/standalone_awx_server_creds/creds.txt
+
+
+
+- name: Get Default Admin Password For AWX Login
+  no_log: true
+  ansible.builtin.shell: '/usr/local/bin/kubectl -n awx get secret awx-admin-password -o jsonpath="{.data.password}" | base64 --decode'
+  args:
+    executable: /bin/bash
+  register: default_awx_web_ui_password_output
+
+
+- name: Show Default Web UI Login Admin Password
+  ansible.builtin.debug:
+    msg: "{{ default_awx_web_ui_password_output.stdout }}"
+
+- name: How you can Access AWX Server
+  ansible.builtin.debug:
+    msg:
+    - "Navigate to https://{{ ansible_fqdn }}/awx/#/login to access AWX Login"
+
+
+    

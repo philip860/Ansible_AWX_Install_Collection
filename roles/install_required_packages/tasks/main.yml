@@ -1,0 +1,13 @@
+---
+#We will install the nescessary packages required to run 
+
+- name: Include package install
+  ansible.builtin.include_tasks:
+    file: package_install_on_rhel.yml
+  when: ('RedHat' in ansible_os_family ) or ('CentOS' in ansible_os_family )
+
+
+- name: Include ipackage_install_on_ubuntu.yml File
+  ansible.builtin.include_tasks:
+    file: package_install_on_ubuntu.yml
+  when: ('Ubuntu' in ansible_distribution )

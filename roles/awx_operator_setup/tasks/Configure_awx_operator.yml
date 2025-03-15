@@ -1,0 +1,81 @@
+- name: Set variable for ITS tools directory
+  stat:
+    path: "/admin_tools"
+  register:  admin_tools_dir_check
+
+- name: Create the ITS_tools directory if it is not present
+  ansible.builtin.file:
+    path: "/admin_tools"
+    state: directory
+    mode: '0755'
+    recurse: yes
+  when: not admin_tools_dir_check.stat.exists == true
+  
+- name: Download GIT AWX Operator
+  ansible.builtin.shell: git clone  https://github.com/ansible/awx-operator.git
+  args:
+    executable: /bin/bash
+    chdir: /admin_tools/
+    
+    
+- name: Checkout Version 2.5.0 Of awx-operator
+  ansible.builtin.shell: git checkout 2.5.0
+  args:
+    executable: /bin/bash
+    chdir: /admin_tools/awx-operator
+    
+
+- name: Copy Over Custom awx-deploy files to /admin_tools/awx-operator
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/awx-deploy"
+    dest: "/admin_tools/awx-operator"
+  
+
+#- name: Entering awx_postgres_db_host Into secret File
+#  replace:
+#    path: "/admin_tools/awx-deploy/secret.yaml"
+#    regexp: 'awx_postgres_db_host'
+#    replace: "{{  awx_postgres_server }}"
+
+
+- name: "Entering  hostname {{ ansible_fqdn }} Into secret File"
+  replace:
+    path: "/admin_tools/awx-operator/awx-deploy/awx.yaml"
+    regexp: 'ansible_fqdn'
+    replace: "{{  ansible_fqdn }}"
+
+
+- name: Entering awx_postgres_db_password Into secret File
+  replace:
+    path: "/admin_tools/awx-operator/awx-deploy/secret.yaml"
+    regexp: 'awx_postgres_db_password'
+    replace: "{{  awx_postgres_db_password }}"
+
+  
+- name: Entering awx_admin_username Into secret File
+  replace:
+    path: "/admin_tools/awx-operator/awx-deploy/secret.yaml"
+    regexp: 'awx_admin_username'
+    replace: "{{  awx_admin_username }}"
+   
+
+- name: Entering awx_admin_username_password Into secret File
+  replace:
+    path: "/admin_tools/awx-operator/awx-deploy/secret.yaml"
+    regexp: 'awx_password'
+    replace: "{{  awx_admin_username_password }}"    
+
+        
+#### Uncomment if Using a seperate Postgres DB for AWX Server
+#- name: Entering awx_postgres_server Into kustomization.yaml File
+#  replace:
+#    path: "/admin_tools/awx-deploy/kustomization.yaml"
+#    regexp: 'awx_postgres_server'
+#    replace: "{{  awx_postgres_server }}"
+
+- name: Entering awx_postgres_server Into kustomization.yaml File
+  replace:
+    path: "/admin_tools/awx-operator/awx-deploy/kustomization.yaml"
+    regexp: 'awx_postgres_db_password'
+    replace: "{{ awx_postgres_db_password }}"
+

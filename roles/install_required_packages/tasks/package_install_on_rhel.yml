@@ -1,0 +1,60 @@
+
+- name: Install the Necessary Packages required to run AWX Server
+  yum:
+    name:
+      - git
+      - make
+      - gcc
+      - gcc-c++
+      - nodejs
+      - gettext
+      - device-mapper-persistent-data
+      - lvm2
+      - bzip2
+      - python3-pip
+      - libseccomp
+      #- pam_krb5
+      - cyrus-sasl 
+      - psmisc 
+      - tcpdump 
+      - cyrus-sasl-gssapi
+      - python3-policycoreutils
+      - NetworkManager-cloud-setup
+      - setroubleshoot
+      - firewalld
+
+- name: Copy Over pam_krb5-4.11-1.el9.x86_64.rpm file
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/pam_krb5-4.11-1.el9.x86_64.rpm"
+    dest: /
+
+- name: Install pam_krb5 Package
+  ansible.builtin.shell: 'yum localinstall pam_krb5-4.11-1.el9.x86_64.rpm -y'
+  args:
+    executable: /bin/bash
+    chdir: / 
+  
+
+
+
+#Upgrade Pip 
+- name: Upgrade Pip
+  ansible.builtin.shell: 'pip3 install --upgrade pip'
+  args:
+    executable: /bin/bash
+
+
+- name: Install multi python packages
+  pip:
+    name:
+      - cryptography
+      - setuptools_rust
+      - ansible
+
+
+#We Will Install all the Development Tools Software
+- name: Install Development Tools 
+  ansible.builtin.shell: 'yum -y groupinstall "Development Tools"'
+  args:
+    executable: /bin/bash
+
