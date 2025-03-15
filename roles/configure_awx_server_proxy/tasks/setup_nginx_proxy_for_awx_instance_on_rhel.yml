@@ -4,6 +4,12 @@
     path: /admin_tools/helm
     state: directory
 
+
+- name: Create /admin_tools/certs Directory
+  ansible.builtin.file:
+    path: /admin_tools/certs
+    state: directory
+
 - name: Install Packages
   ansible.builtin.yum:
     name: "{{ item }}"
@@ -57,6 +63,17 @@
     dest: "/etc/nginx/conf.d/awx-no-ssl.conf"
 
 
+
+- name: Copy Self Generate SSL Cert To /etc/nginx/certs directory
+  ansible.builtin.shell: cp -r /admin_tools/awx-operator/awx-deploy/tls.crt  /etc/nginx/certs/server.crt
+  args:
+    executable: /bin/bash
+
+
+- name: Copy Self Generate SSL Private Key To /etc/nginx/certs directory
+  ansible.builtin.shell: cp -r /admin_tools/awx-operator/awx-deploy/tls.key  /etc/nginx/certs/server.key
+  args:
+    executable: /bin/bash
 
 
 - name: Extract last line from service output
