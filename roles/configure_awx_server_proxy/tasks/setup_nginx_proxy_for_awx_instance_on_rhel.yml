@@ -1,12 +1,48 @@
 
-- name: Install Nginx Package
+- name: Create /admin_tools/helm Directory
+  ansible.builtin.file:
+    path: /admin_tools/helm
+    state: directory
+
+- name: Install Packages
   ansible.builtin.yum:
-    name: nginx
+    name: "{{ item }}"
     state: latest
+  loop:
+    - nginx
+    - wget
+    - tar
+    - jq
 
 
 
+- name: Download Helm Binary
+  ansible.builtin.shell: wget https://get.helm.sh/helm-v3.15.3-linux-amd64.tar.gz && tar -xvf helm-v3.15.3-linux-amd64.tar.gz 
+  args:
+    executable: /bin/bash
+    chdir: /admin_tools/helm
 
+
+- name: Copy Helm Binary Over to /usr/bin
+  ansible.builtin.shell: cp -r linux-amd64/helm /usr/bin
+  args:
+    executable: /bin/bash
+    chdir: /admin_tools/helm
+
+- name: Remove file /var/lib/rancher/k3s/server/manifests/traefik.yaml
+  ansible.builtin.file: 
+    path: /var/lib/rancher/k3s/server/manifests/traefik.yaml
+    state: absent 
+
+- name: Uninstall Traefik Using Helm
+  ansible.builtin.shell: helm uninstall traefik traefik-crd -n kube-system
+  args:
+    executable: /bin/bash
+
+- name: Restart K3s service
+  ansible.builtin.systemd:
+    name: k3s
+    state: restarted
 
 
 - name: Copy Over Custom Nginx config_files to /etc/nginx/conf.d/awx-ssl.conf
