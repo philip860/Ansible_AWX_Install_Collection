@@ -119,10 +119,10 @@
     dest: "/etc/nginx/conf.d/awx-no-ssl.conf"
 
 
-- name: Set Nginx SELinux Rule
-  ansible.builtin.shell: "setsebool -P httpd_can_network_connect 1"
-  args:
-    executable: /bin/bash
+# - name: Set Nginx SELinux Rule
+#   ansible.builtin.shell: "setsebool -P httpd_can_network_connect 1"
+#   args:
+#     executable: /bin/bash
 
 
 
