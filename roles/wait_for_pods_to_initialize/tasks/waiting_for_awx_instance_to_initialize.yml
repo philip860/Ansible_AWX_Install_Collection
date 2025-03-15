@@ -1,3 +1,16 @@
+    - name: Going to Delete Default v1beta1.metrics.k8s.io components file
+      ansible.builtin.shell:  /usr/local/bin/kubectl delete -f components-default.yaml
+      args:
+        executable: /bin/bash
+        chdir: /admin_tools/awx-operator/config_files
+
+    - name: Going to Add Custom v1beta1.metrics.k8s.io components file
+      ansible.builtin.shell:  /usr/local/bin/kubectl apply -f metrics-components-edited.yaml
+      args:
+        executable: /bin/bash
+        chdir: /admin_tools/awx-operator/config_files
+
+
     - name: Get the name of the awx-task pod
       ansible.builtin.shell: >
         kubectl get pods -n awx --no-headers -o custom-columns=":metadata.name,:status.phase" | grep '^awx-task' | awk '{print $1}'
