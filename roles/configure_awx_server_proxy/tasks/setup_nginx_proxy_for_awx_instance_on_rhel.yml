@@ -86,24 +86,10 @@
 
 ############################
 
-- name: Patch AWX service to NodePort
-  ansible.builtin.shell: |
-    kubectl patch service awx-service -n awx -p '
-    {
-      "spec": {
-        "type": "NodePort",
-        "ports": [{"port": 80, "nodePort": 30080}]
-      }
-    }'
-  args:
-    executable: /bin/bash
-  register: patch_result
-
-
 
 
 - name: Get AWX service details
-  ansible.builtin.shell: "kubectl get service awx-service -n awx -o jsonpath='{.spec.ports[0].port}'"
+  ansible.builtin.shell: "kubectl get service awx-service -n awx -o jsonpath='{.spec.ports[0][0].port}'"
   args:
     executable: /bin/bash
   register: awx_service_output
