@@ -90,11 +90,11 @@
   ansible.builtin.shell: "kubectl get service awx-service -n awx -o jsonpath='{.spec.ports[0].port}'"
   args:
     executable: /bin/bash
-  register: service_port
+  register: awx_service_output
 
 - name: Print extracted service port
   ansible.builtin.debug:
-     msg: "Extracted service port is {{ service_port.stdout }}"
+     msg: "Extracted service port is {{ awx_service_output.stdout }}"
 
 
 
