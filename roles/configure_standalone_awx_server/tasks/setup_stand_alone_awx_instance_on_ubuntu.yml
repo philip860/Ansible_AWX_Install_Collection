@@ -201,6 +201,8 @@
     - 6443
     - 51820
     - 5432
+    - 443
+    - 80
 
 
 - name: Configure Firewall For K3s Pod and Services Networks
