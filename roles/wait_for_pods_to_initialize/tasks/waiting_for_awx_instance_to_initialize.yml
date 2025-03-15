@@ -1,36 +1,51 @@
-- name: Get the name of the awx-migration pod
-  ansible.builtin.shell: >
-    kubectl get pods -n awx --no-headers -o custom-columns=":metadata.name" | grep '^awx-migration'
-  register: migration_pod
-  changed_when: false
+    - name: Get the name of the awx-task pod
+      ansible.builtin.shell: >
+        kubectl get pods -n awx --no-headers -o custom-columns=":metadata.name,:status.phase" | grep '^awx-task' | awk '{print $1}'
+      register: task_pod
+      changed_when: false
 
-- name: Fail if no awx-migration pod is found
-  ansible.builtin.fail:
-    msg: "No awx-migration pod found!"
-  when: migration_pod.stdout == ""
+    - name: Fail if no awx-task pod is found
+      ansible.builtin.fail:
+        msg: "No awx-task pod found!"
+      when: task_pod.stdout == ""
 
-- name: Wait for awx-migration pod to be in Completed state
-  ansible.builtin.shell: >
-   kubectl get pod {{ migration_pod.stdout }} -n awx -o jsonpath='{.status.phase}'
-  register: pod_status
-  retries: 20
-  delay: 60
-  until: pod_status.stdout == "Succeeded" or pod_status.stdout == "Completed"
-  changed_when: false
+    - name: Wait for awx-task pod to be in Running state
+      ansible.builtin.shell: >
+        kubectl get pod {{ task_pod.stdout }} -n awx -o jsonpath='{.status.phase}'
+      register: task_status
+      retries: 20
+      delay: 60
+      until: task_status.stdout == "Running"
+      changed_when: false
 
-- name: Print success message
-  ansible.builtin.debug:
-    msg: "AWX Migration pod ({{ migration_pod.stdout }}) has completed successfully!"
+    - name: Get the name of the awx-migration pod
+      ansible.builtin.shell: >
+        kubectl get pods -n awx --no-headers -o custom-columns=":metadata.name" | grep '^awx-migration'
+      register: migration_pod
+      changed_when: false
 
+    - name: Fail if no awx-migration pod is found
+      ansible.builtin.fail:
+        msg: "No awx-migration pod found!"
+      when: migration_pod.stdout == ""
 
-- name: Retrieve AWX admin secret
-  ansible.builtin.shell: >
-    kubectl -n awx get secret awx-admin-password -o go-template='{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\n"}}{{end}}'
-  register: awx_admin_secret
-  changed_when: false
-  when: pod_status.stdout == "Succeeded" or pod_status.stdout == "Completed"
+    - name: Wait for awx-migration pod to be in Completed state
+      ansible.builtin.shell: >
+        kubectl get pod {{ migration_pod.stdout }} -n awx -o jsonpath='{.status.phase}'
+      register: pod_status
+      retries: 20
+      delay: 60
+      until: pod_status.stdout == "Succeeded" or pod_status.stdout == "Completed"
+      changed_when: false
 
-- name: Print AWX Admin Secret
-  ansible.builtin.debug:
-    msg: "AWX Admin Secret: {{ awx_admin_secret.stdout }}"
-  when: awx_admin_secret.stdout is defined
+    - name: Retrieve AWX admin secret
+      ansible.builtin.shell: >
+        kubectl -n awx get secret awx-admin-password -o go-template='{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\n"}}{{end}}'
+      register: awx_admin_secret
+      changed_when: false
+      when: pod_status.stdout == "Succeeded" or pod_status.stdout == "Completed"
+
+    - name: Print AWX Admin Secret
+      ansible.builtin.debug:
+        msg: "AWX Admin Secret: {{ awx_admin_secret.stdout }}"
+      when: awx_admin_secret.stdout is defined

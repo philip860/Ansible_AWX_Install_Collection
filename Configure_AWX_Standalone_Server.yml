@@ -33,10 +33,10 @@
 
   roles:
   
-    - install_required_packages
-    - install_k3s
-    - generate_self_signed_tls_certs_for_awx_server
-    - awx_operator_setup
-    - configure_standalone_awx_server
-    - configure_awx_server_proxy
+    # - install_required_packages
+    # - install_k3s
+    # - generate_self_signed_tls_certs_for_awx_server
+    # - awx_operator_setup
+    # - configure_standalone_awx_server
+    # - configure_awx_server_proxy
     - wait_for_pods_to_initialize
