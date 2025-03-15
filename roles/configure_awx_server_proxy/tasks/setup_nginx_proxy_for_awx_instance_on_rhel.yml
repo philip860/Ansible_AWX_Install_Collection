@@ -8,6 +8,10 @@
   args:
     executable: /bin/bash  
 
+- name: Fix k3s Directory Permissions
+  ansible.builtin.shell: "cp /etc/rancher/k3s/k3s.yaml ~/.kube/config  &&  chown $USER ~/.kube/config"
+  args:
+    executable: /bin/bash  
 
 
 - name: Create /admin_tools/helm Directory
