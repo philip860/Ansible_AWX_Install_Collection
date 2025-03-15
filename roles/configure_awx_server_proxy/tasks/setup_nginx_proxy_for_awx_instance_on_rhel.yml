@@ -95,7 +95,7 @@
 
 - name: Extract last line from service output
   set_fact:
-    ansible.builtin.shell: "$(echo '{{ awx_service_output }}' | awk 'END {print}')"
+    ansible.builtin.shell: "$(echo '{{ awx_service_output.stdout_lines }}' | awk 'END {print}')"
   register: last_line
 
 
