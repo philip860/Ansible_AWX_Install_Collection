@@ -9,6 +9,8 @@ spec:
   # Set the replicas count to scale AWX pods
   #replicas: 3
   
+  service_type: nodeport
+
   admin_user: admin
   admin_password_secret: awx-admin-password
 
