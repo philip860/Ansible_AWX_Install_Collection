@@ -1,3 +1,14 @@
+- name: Reinstall k3s
+  ansible.builtin.shell: curl -sfL https://get.k3s.io | sudo bash -            
+  args:
+    executable: /bin/bash
+
+- name: Fix k3s Permissions
+  ansible.builtin.shell: chmod 644 /etc/rancher/k3s/k3s.yaml           
+  args:
+    executable: /bin/bash  
+
+
 
 - name: Create /admin_tools/helm Directory
   ansible.builtin.file:
