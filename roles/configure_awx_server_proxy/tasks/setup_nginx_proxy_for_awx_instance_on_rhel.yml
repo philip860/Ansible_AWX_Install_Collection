@@ -87,13 +87,7 @@
 ############################
 
     - name: Get AWX service details
-      ansible.builtin.shell: "kubectl get service -n awx | tail -n 1"
-      args:
-        executable: /bin/bash
-      register: awx_service_output
-
-    - name: Extract service port
-      ansible.builtin.shell: "echo '{{ awx_service_output.stdout }}' | awk '{print $NF}' | sed 's|/.*||'"
+      ansible.builtin.shell: "kubectl get service awx-service -n awx -o jsonpath='{.spec.ports[0].port}'"
       args:
         executable: /bin/bash
       register: service_port
