@@ -14,20 +14,23 @@
     enabled: false
   when: ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "9"
 
-- name: Restart Server
-  ansible.builtin.shell: "reboot"
-  args:
-    executable: /bin/bash
-  async: 35
-  poll: 0
-  when: ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "9"
+
+#Used to monitor restart servers from a Ansible control node
+#Commented out for local server use, as it will reboot Ansible-AWX Install
+# - name: Restart Server
+#   ansible.builtin.shell: "reboot"
+#   args:
+#     executable: /bin/bash
+#   async: 35
+#   poll: 0
+#   when: ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "9"
   
-- name: Wait for system to become reachable over SSH
-  ansible.builtin.wait_for_connection:
-    connect_timeout: 10
-    delay: 5
-    timeout: 420
-  when: ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "9"
+# - name: Wait for system to become reachable over SSH
+#   ansible.builtin.wait_for_connection:
+#     connect_timeout: 10
+#     delay: 5
+#     timeout: 420
+#   when: ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "9"
 
 
 #Starting the K3s install
