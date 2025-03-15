@@ -88,8 +88,9 @@
 
 
 
-- name: Get AWX service details
-  ansible.builtin.shell: "kubectl get service awx-service -n awx -o jsonpath='{.spec.ports[0][0].port}'"
+
+- name: Get AWX service NodePort
+  ansible.builtin.shell: "kubectl get service awx-service -n awx -o jsonpath='{.spec.ports[0].nodePort}'"
   args:
     executable: /bin/bash
   register: awx_service_output
