@@ -1,31 +1,40 @@
-- name: Permit traffic in default zone on port 5432/tcp For External Postgres Server
-  ansible.posix.firewalld:
-    port: 5432/tcp
-    permanent: yes
-    immediate: yes
-    state: enabled
 
 
 
-- name: Set variable for ITS tools directory
-  stat:
-    path: "/admin_tools"
-  register:  admin_tools_dir_check
-
-- name: Create the ITS_tools directory if it is not present
-  ansible.builtin.file:
-    path: "/admin_tools"
-    state: directory
-    mode: '0755'
-    recurse: yes
-  when: not admin_tools_dir_check.stat.exists == true
+- name: Copy Over Custom Nginx config_files to /etc/nginx/conf.d/awx-ssl.conf
+  ansible.builtin.template:
+    src: "{{ role_path }}/files/awx-ssl.conf"
+    dest: "/etc/nginx/conf.d/awx-ssl.conf"
 
 
-
-- name: Copy Over Custom config_files to /admin_tools/awx-operator
+- name: Copy Over Custom Nginx config_files to /etc/nginx/conf.d/awx-no-ssl.conf
   ansible.builtin.copy:
-    src: "{{ role_path }}/files/config_files"
-    dest: "/admin_tools/awx-operator"
+    src: "{{ role_path }}/files/awx-no-ssl.conf"
+    dest: "/etc/nginx/conf.d/awx-no-ssl.conf"
+
+
+
+
+- name: Extract last line from service output
+  set_fact:
+    last_line: "{{ awx_service_output.stdout_lines | last }}"
+
+- name: Extract service port
+  set_fact:
+    service_port: "{{ last_line | regex_replace('[^0-9]', '') }}"
+
+- name: Update Nginx config
+  replace:
+    path: /etc/nginx/conf.d/awx-ssl.conf
+    regexp: '30190'
+    replace: "{{ service_port }}"
+
+- name: Restart Nginx
+  service:
+    name: nginx
+    state: restarted
+
+
 
 
 
