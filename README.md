@@ -44,7 +44,7 @@ The playbook uses the following roles:
 ### 1. Clone the Repository
 
 ```sh
-git clone https://github.com/your-repo/ansible-awx-install.git
+git https://github.com/philip860/Ansible_AWX_Install_Collection
 cd ansible-awx-install
 ```
 
