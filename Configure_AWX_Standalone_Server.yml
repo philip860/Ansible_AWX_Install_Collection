@@ -5,38 +5,38 @@
   gather_facts: true
   become: true
   #Comment out vars_prompt entries to run playbook manually
-  # vars_prompt:
+  vars_prompt:
 
 
-  #   - name: awx_single_node
-  #     prompt: "Please enter a name for sever to run awx install playbook on"
-  #     private: no 
+    - name: awx_single_node
+      prompt: "Please enter a name for sever to run awx install playbook on"
+      private: no 
 
-  #   - name: awx_postgres_db_password
-  #     prompt: "What is the Password for AWX Postgres DB?"
-  #     private: no 
+    - name: awx_postgres_db_password
+      prompt: "What is the Password for AWX Postgres DB?"
+      private: no 
 
-  #   - name: secret_key
-  #     prompt: "Please enter a secret key to use for Postgres DB encryption"
-  #     private: no 
+    - name: secret_key
+      prompt: "Please enter a secret key to use for Postgres DB encryption"
+      private: no 
 
-  #   - name: awx_admin_username
-  #     prompt: "What is the name of the AWX Admin User?"
-  #     private: no 
+    - name: awx_admin_username
+      prompt: "What is the name of the AWX Admin User?"
+      private: no 
 
-  #   - name: awx_admin_username_password
-  #     prompt: "What is the password for the AWX Admin User?"
-  #     private: no 
+    - name: awx_admin_username_password
+      prompt: "What is the password for the AWX Admin User?"
+      private: no 
 
-  #   - name: awx_user_password_var
-  #     prompt: "Enter a password for local awx user to be created on system"
-  #     private: no 
+    - name: awx_user_password_var
+      prompt: "Enter a password for local awx user to be created on system"
+      private: no 
 
   roles:
   
-    # - install_required_packages
-    # - install_k3s
-    # - generate_self_signed_tls_certs_for_awx_server
-    # - awx_operator_setup
-    # - configure_standalone_awx_server
+    - install_required_packages
+    - install_k3s
+    - generate_self_signed_tls_certs_for_awx_server
+    - awx_operator_setup
+    - configure_standalone_awx_server
     - configure_awx_server_proxy
