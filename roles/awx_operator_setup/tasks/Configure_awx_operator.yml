@@ -18,8 +18,8 @@
     chdir: /admin_tools/
     
     
-- name: Checkout Version 2.5.0 Of awx-operator
-  ansible.builtin.shell: git checkout 2.5.0
+- name: Checkout Version 2.19.1 Of awx-operator
+  ansible.builtin.shell: git checkout 2.19.1
   args:
     executable: /bin/bash
     chdir: /admin_tools/awx-operator
