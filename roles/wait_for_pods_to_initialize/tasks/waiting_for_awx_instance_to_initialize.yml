@@ -58,10 +58,10 @@
       changed_when: false
       # when: pod_status.stdout == "Succeeded" or pod_status.stdout == "Completed"
 
-    - name: Remove unwanted characters from AWX admin secret
+    - name: Clean up AWX admin password
       ansible.builtin.set_fact:
-        awx_admin_password: "{{ awx_admin_secret.stdout | regex_replace('password: ', '') | trim }}"
-
+        awx_admin_password: "{{ awx_admin_secret.stdout | regex_replace('\\s+$', '') }}"
+        
     - name: Print AWX Admin Secret
       ansible.builtin.debug:
         msg: "AWX Admin Secret: {{ awx_admin_password }}"
