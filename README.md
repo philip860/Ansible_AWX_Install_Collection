@@ -158,9 +158,15 @@ Once the playbook completes, verify the AWX setup:
 
 ## Installation Workflow
 
-Screenshots of various points during the installation process:
+Screenshot of start of installation and variable prompts:
 
 ![Initial variable prompts](./screenshots/AWX-Server-Install.JPG)
+
+
+Screenshot of pods starting to initialize:
+
+![Pods starting to initialize:](./screenshots/AWX-Server-Migration-Pod.jpg)
+
 
 
 ## License
