@@ -54,7 +54,7 @@ The following software components are required for completing the AWX standalone
 
 ## Keynote: K3s and Ingress Configuration
 
-By default, K3s installs the Traefik Ingress Controller, which uses strict DNS resolution. While this may be suitable for some environments, it can be restrictive in others. To ensure broader compatibility and improved functionality across various use cases, we have removed the Traefik Ingress Controller and instead set up an NGINX proxy. This provides greater flexibility in managing ingress traffic and enhances overall system performance.
+By default, K3s installs the Traefik Ingress Controller, which uses strict DNS resolution. While this may be suitable for some environments, it can cause issues with AWX resolving to the backend correctly, unless you use the EXACT hostname use specified at the star of the install. To ensure broader compatibility and improved functionality across various use cases, we have removed the Traefik Ingress Controller and instead set up an NGINX proxy directly on the server. This provides greater flexibility in managing ingress traffic and enhances overall system performance.
 
 ## Installation Steps
 
