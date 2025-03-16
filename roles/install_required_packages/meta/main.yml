@@ -1,7 +1,7 @@
 
 galaxy_info:
   author: "Philip Duncan"
-  description: "Ansible role for Install k3s"
+  description: "Ansible role for installing required packages to run awx-server"
   license: "GPL-3.0-or-later"
   min_ansible_version: "2.9"
   platforms:
