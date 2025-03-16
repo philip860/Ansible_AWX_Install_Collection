@@ -156,6 +156,25 @@ Once the playbook completes, verify the AWX setup:
   systemctl restart nginx
   ```
 
+## Installation Workflow
+
+### 1. Start of Installation and Variable Prompts
+![Initial variable prompts](screenshots/AWX-Server-Install.JPG)
+
+### 2. Pods Starting to Initialize
+![Pods starting to initialize](screenshots/AWX-Server-Migration-Pod.JPG)
+
+
+### 3. AWX Web Browser Show Migration In Progress
+![Web browser waiting for pods to initialize](screenshots/AWX-Server-Upgrade-Message.JPG)
+
+
+### 4. Pods Finshed Initializing - Login Ready!
+![Default login screen](screenshots/Default-Login-Screen.JPG)
+
+
+### 5. Successfully logged in - AWX GUI
+![AWX GUI](screenshots/AWX-GUI.JPG)
 
 
 ## License
