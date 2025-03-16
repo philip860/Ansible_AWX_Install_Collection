@@ -41,6 +41,21 @@ The playbook uses the following roles:
 
 ## Essential Software Components
 
+The following operating systems were tested with this AWX standalone server installation:
+
+- **RHEL**: Red Hat Enterprise Linux.
+  - Version: `8/9`
+
+- **Centos**: Community ENTerprise Operating System.
+  - Version: `8/9`
+
+- **Ubuntu**: Canonical Ubuntu.
+  - Version: `22.04.5 LTS`
+
+
+
+## Essential Software Components
+
 The following software components are used to complete the AWX standalone server installation:
 
 - **AWX Operator**: Automates the deployment and management of AWX in Kubernetes.
