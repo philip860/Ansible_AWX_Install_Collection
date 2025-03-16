@@ -107,7 +107,7 @@ ansible-playbook configure_awx_standalone.yml -vvv
 If using the Ansible Galaxy collection, execute the playbook using:
 
 ```sh
-ansible-playbook philip860.awx_install.Configure_AWX_Standalone_Server.yml -vvv
+ansible-playbook "$HOME/.ansible/collections/ansible_collections/philip860/awx_install/Configure_AWX_Standalone_Server.yml" -vvv
 ```
 
 If using prompts, remove `vars_prompt` comments before running.
