@@ -159,22 +159,22 @@ Once the playbook completes, verify the AWX setup:
 ## Installation Workflow
 
 ### 1. Start of Installation and Variable Prompts
-![Initial variable prompts](screenshots/AWX-Server-Install.JPG)
+![Initial variable prompts](screenshots/AWX-Server-Install.jpg)
 
 ### 2. Pods Starting to Initialize
-![Pods starting to initialize](screenshots/AWX-Server-Migration-Pod.JPG)
+![Pods starting to initialize](screenshots/AWX-Server-Migration-Pod.jpg)
 
 
 ### 3. AWX Web Browser Show Migration In Progress
-![Web browser waiting for pods to initialize](screenshots/AWX-Server-Upgrade-Message.JPG)
+![Web browser waiting for pods to initialize](screenshots/AWX-Server-Upgrade-Message.jpg)
 
 
 ### 4. Pods Finshed Initializing - Login Ready!
-![Default login screen](screenshots/Default-Login-Screen.JPG)
+![Default login screen](screenshots/Default-Login-Screen.jpg)
 
 
 ### 5. Successfully logged in - AWX GUI
-![AWX GUI](screenshots/AWX-GUI.JPG)
+![AWX GUI](screenshots/AWX-GUI.jpg)
 
 
 ## License
