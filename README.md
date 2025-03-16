@@ -3,6 +3,8 @@
 ## Overview
 This Ansible playbook automates the installation and configuration of an AWX standalone server. AWX is an open-source web-based automation platform that provides a user-friendly interface for Ansible.
 
+This is not a development AWX-server but a fully functionality install of a Ansible AWX Server.
+
 ## Prerequisites
 
 - A Linux-based server (Ubuntu, CentOS, RHEL)
