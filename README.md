@@ -41,7 +41,7 @@ The playbook uses the following roles:
 4. **awx_operator_setup** - Deploys the AWX Operator to manage AWX in Kubernetes.
 5. **configure_standalone_awx_server** - Configures and finalizes the standalone AWX server setup.
 
-## Operating System Install Tested
+## Operating Systems Install Tested On
 
 The following operating systems were tested with this AWX standalone server installation:
 
