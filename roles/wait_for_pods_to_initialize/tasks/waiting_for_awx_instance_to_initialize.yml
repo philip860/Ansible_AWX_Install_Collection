@@ -1,15 +1,16 @@
-    - name: Going to Delete Default v1beta1.metrics.k8s.io components file
-      ansible.builtin.shell:  /usr/local/bin/kubectl delete -f components-default.yaml
+---
+
+    - name: Delete Default v1beta1.metrics.k8s.io components file
+      ansible.builtin.shell: /usr/local/bin/kubectl delete -f components-default.yaml
       args:
         executable: /bin/bash
         chdir: /admin_tools/awx-operator/config_files
 
-    - name: Going to Add Custom v1beta1.metrics.k8s.io components file
-      ansible.builtin.shell:  /usr/local/bin/kubectl apply -f metrics-components-edited.yaml
+    - name: Add Custom v1beta1.metrics.k8s.io components file
+      ansible.builtin.shell: /usr/local/bin/kubectl apply -f metrics-components-edited.yaml
       args:
         executable: /bin/bash
         chdir: /admin_tools/awx-operator/config_files
-
 
     - name: Get the name of the awx-task pod
       ansible.builtin.shell: >
@@ -22,14 +23,55 @@
         msg: "No awx-task pod found!"
       when: task_pod.stdout == ""
 
-    - name: Wait for awx-task pod to be in Running state
-      ansible.builtin.shell: >
-        kubectl get pod {{ task_pod.stdout }} -n awx -o jsonpath='{.status.phase}'
-      register: task_status
-      retries: 20
-      delay: 60
-      until: task_status.stdout == "Running"
-      changed_when: false
+    - block:
+
+        - name: Deleting v1beta1.metrics.k8s.io components 
+          ansible.builtin.shell: /usr/local/bin/kubectl delete -f components-default.yaml
+          args:
+            executable: /bin/bash
+            chdir: /admin_tools/awx-operator/config_files
+    
+        - name: Adding Custom v1beta1.metrics.k8s.io components file
+          ansible.builtin.shell: /usr/local/bin/kubectl apply -f metrics-components-edited.yaml
+          args:
+            executable: /bin/bash
+            chdir: /admin_tools/awx-operator/config_files
+
+        - name: Waiting 20mins for awx-task pod to be in Running state
+          ansible.builtin.shell: >
+            kubectl get pod {{ task_pod.stdout }} -n awx -o jsonpath='{.status.phase}'
+          register: task_status
+          retries: 20
+          delay: 60
+          until: task_status.stdout == "Running"
+          changed_when: false
+
+      rescue:
+
+        - name: Deleting v1beta1.metrics.k8s.io components - Again 
+          ansible.builtin.shell: /usr/local/bin/kubectl delete -f components-default.yaml
+          args:
+            executable: /bin/bash
+            chdir: /admin_tools/awx-operator/config_files
+    
+        - name: Adding Custom v1beta1.metrics.k8s.io components file - Again 
+          ansible.builtin.shell: /usr/local/bin/kubectl apply -f metrics-components-edited.yaml
+          args:
+            executable: /bin/bash
+            chdir: /admin_tools/awx-operator/config_files
+
+        - name: Pod Initialize Status Update
+          ansible.builtin.debug:
+            msg: "awx-task Pod is taking longer than anticipated to start, Check system if there is a storage issue, Checking again..."
+
+        - name: Re-checking and Waiting 10min for awx-task pod to be in Running state after failure
+          ansible.builtin.shell: >
+            kubectl get pod {{ task_pod.stdout }} -n awx -o jsonpath='{.status.phase}'
+          register: task_status_retry
+          retries: 10
+          delay: 60
+          until: task_status_retry.stdout == "Running"
+          changed_when: false
 
     - name: Get the name of the awx-migration pod
       ansible.builtin.shell: >
@@ -53,7 +95,7 @@
 
     - name: Retrieve AWX admin secret
       ansible.builtin.shell: >
-        kubectl -n awx get secret awx-admin-password -o go-template='{{'{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\\n"}}{{end}}'}}'
+        kubectl -n awx get secret awx-admin-password -o go-template='{{"{{range $k,$v := .data}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{" "}}{{end}}"}}'
       register: awx_admin_secret
       changed_when: false
       when: pod_status.stdout == "Succeeded" or pod_status.stdout == "Completed"
