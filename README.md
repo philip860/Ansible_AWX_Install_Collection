@@ -39,6 +39,19 @@ The playbook uses the following roles:
 4. **awx_operator_setup** - Deploys the AWX Operator to manage AWX in Kubernetes.
 5. **configure_standalone_awx_server** - Configures and finalizes the standalone AWX server setup.
 
+## Essential Software Components
+
+The following software components are used in this build of the AWX standalone server installation:
+
+- **AWX Operator**: Automates the deployment and management of AWX in Kubernetes.
+  - Version: `2.19.1`
+- **K3s**: A lightweight Kubernetes distribution used to run AWX.
+  - Version: `v1.24.0+k3s1`
+- **Helm**: A package manager for Kubernetes, used to manage AWX deployment.
+  - Version: `v3.10.3`
+- **PostgreSQL**: The database backend for AWX.
+  - Version: `15`
+
 ## Installation Steps
 
 ### 1. Clone the Repository
@@ -89,3 +102,4 @@ This project is licensed under the MIT License.
 
 ## Author
 [Philip Duncan](https://github.com/philip860/)
+
