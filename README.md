@@ -222,6 +222,9 @@ Use the command "kubectl get pods -n awx" to get the full names of the pods beca
 ## License
 This project is licensed under the MIT License.
 
+## Addional questions/inquires
+Email: philipduncan860@gmail.com
+
 ## Author
 [Philip Duncan](https://github.com/philip860/)
 
