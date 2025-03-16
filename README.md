@@ -205,7 +205,7 @@ Depending on your system's resources this installation can take anywhere from ab
 
 If any issues occur during the build, first check to make sure your system has enough free storage available.
 
-The following commands can help to shed some light on possible installation issues with AWX & Kubernetes.
+The following commands can help to shed some light on possible installation issues with AWX & Kubernetes Use the command "kubectl get pods -n awx" to get the full names of the pods because they are subject to change.
 
 - Show all awx related pods running for kubernetes:
   ```
@@ -219,7 +219,7 @@ The following commands can help to shed some light on possible installation issu
   ```
   kubectl logs awx-operator-controller-manager-subject_to_change -f -n awx
   ```
-Use the command "kubectl get pods -n awx" to get the full names of the pods because they are subject to change. 
+
 
 ## License
 This project is licensed under the MIT License.
