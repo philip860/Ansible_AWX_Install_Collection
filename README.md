@@ -123,7 +123,14 @@ Once the playbook completes, verify the AWX setup:
   ```sh
   ls /admin_tools/awx-operator/awx-deploy/
   ```
-
+- To add your own custom SSL certs you will need to replace the default (tls.crt) & key (tls.key)
+  ```sh
+  cd /admin_tools/awx-operator/awx-deploy/
+  mv tls.crt tls-old.crt
+  mv tls.key tls-old.key 
+  cp -r /full_path/server.crt tls.crt
+  cp -r /full_path/server.key tls.key
+  ```
 
 
 ## License
