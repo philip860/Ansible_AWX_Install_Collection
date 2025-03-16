@@ -1,4 +1,4 @@
-# Nginx Configuration Role
+# Configuration AWX Server Role
 
 ## Overview
 
