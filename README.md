@@ -209,18 +209,20 @@ If any issues occur during the build, first check to make sure your system has e
 The following commands can help to shed some light on possible installation issues with AWX & Kubernetes Use the command "kubectl get pods -n awx" to get the full names of the pods because they are subject to change.
 
 - Show all awx related pods running for kubernetes:
-  ```
+```sh
   kubectl get pods -n awx
-  ```
+```
 - Show all related events for awx deployment in kubernetes:
-  ```
-  kubectl get events -n awx
-  ```
-- Show all related information for the awx-operator-controller-manager pod:
-  ```
-  kubectl logs awx-operator-controller-manager-subject_to_change -f -n awx
-  ```
 
+```sh
+  kubectl get events -n awx
+```
+
+- Show all related information for the awx-operator-controller-manager pod:
+
+```sh
+  kubectl logs awx-operator-controller-manager-subject_to_change -f -n awx
+```
 
 ## License
 This project is licensed under the MIT License.
