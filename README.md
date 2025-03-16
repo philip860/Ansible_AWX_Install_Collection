@@ -75,11 +75,19 @@ By default, K3s installs the Traefik Ingress Controller, which uses strict DNS r
 
 ## Installation Steps
 
-### 1. Clone the Repository
+### 1. Clone the Repository (Option 1)
 
 ```sh
 git clone https://github.com/philip860/Ansible_AWX_Install_Collection
 cd ansible-awx-install
+```
+
+### 1. Install via Ansible Galaxy (Option 2)
+
+Alternatively, you can install the collection from Ansible Galaxy:
+
+```sh
+ansible-galaxy collection install philip860.awx_install
 ```
 
 ### 2. Update Inventory and Variables
@@ -90,10 +98,16 @@ Alternatively, you can define variables in `vars/main.yml` instead of using prom
 
 ### 3. Run the Playbook
 
-Execute the playbook using:
+For repository installation, execute the playbook using:
 
 ```sh
 ansible-playbook configure_awx_standalone.yml -vvv
+```
+
+If using the Ansible Galaxy collection, execute the playbook using:
+
+```sh
+ansible-playbook philip860.awx_install.Configure_AWX_Standalone_Server.yml -vvv
 ```
 
 If using prompts, remove `vars_prompt` comments before running.
@@ -117,6 +131,8 @@ Once the playbook completes, verify the AWX setup:
   ```sh
   kubectl get pods -n awx
   ```
+
+
 
 ## SSL Cert Update
 
