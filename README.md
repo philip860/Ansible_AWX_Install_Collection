@@ -159,7 +159,7 @@ Once the playbook completes, verify the AWX setup:
 ## Installation Workflow
 
 ### 1. Start of Installation and Variable Prompts
-![Initial variable prompts](screenshots/AWX-Server-Install.png)
+![Initial variable prompts](https://raw.githubusercontent.com/philip860/Ansible_AWX_Install_Collection/main/screenshots/AWX-Server-Install.png)
 
 ### 2. Pods Starting to Initialize
 ![Pods starting to initialize](screenshots/AWX-Server-Migration-Pod.jpg)
