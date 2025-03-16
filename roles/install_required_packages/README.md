@@ -1,23 +1,23 @@
-# SSL Cert Configuration Role
+# Install System Packages Required To Run AWX-Server Role
 
 ## Overview
 
-This Ansible role automates the setup and configuration of k3s, and associated services to support AWX deployment within a Kubernetes environment. 
+This Ansible role automates the setup and configuration of required packages needed to run awx on machine. 
 
 ## Key Functions
 
 
-- **Configure k3s**: Installs k3s software in order to provide a light-weight kubernetes env.
+- **Install packages**: Installs various software in order to support AWX-Server Installation.
 
 
 ## Usage
 
-This role should be executed as part of an AWX installation process where K3s is required as the Kubernetes environment and Nginx is used as the ingress controller.
+This role should be executed as part of an AWX installation process before running  AWX-operator deployment install process.
 
 ## Documentation
 
 For more details on AWX installation and Kubernetes configuration, refer to:
-- [AWX Documentation](https://ranchermanager.docs.rancher.com/getting-started/installation-and-upgrade/install-upgrade-on-a-kubernetes-cluster)
+- [AWX Documentation](https://github.com/ansible/awx-operator)
 
 
 ## License
