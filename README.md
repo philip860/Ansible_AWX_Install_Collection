@@ -91,7 +91,7 @@ Alternatively, you can define variables in `vars/main.yml` instead of using prom
 Execute the playbook using:
 
 ```sh
-ansible-playbook -i inventory.yml configure_awx_standalone.yml --ask-become-pass
+ansible-playbook configure_awx_standalone.yml -vvv
 ```
 
 If using prompts, remove `vars_prompt` comments before running.
