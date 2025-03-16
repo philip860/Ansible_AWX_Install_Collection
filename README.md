@@ -198,7 +198,7 @@ Depending on your system's resources this installation can take anywhere from ab
 
 If any issues occur during the build, first check to make sure your system has enough free storage available.
 
-The following command can help to shed some light on possible installation issues with AWX & Kubernetes
+The following commands can help to shed some light on possible installation issues with AWX & Kubernetes
 
   ```sh
   kubectl get pods -n awx
