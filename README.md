@@ -162,7 +162,7 @@ Once the playbook completes, verify the AWX setup:
 Secreenshots of various points during the installation process:
 
 ```md
-![Initial variable prompts](screenshots/AWX-Server-Install.JPG)
+![Initial variable prompts](./screenshots/AWX-Server-Install.JPG)
 ```
 
 
