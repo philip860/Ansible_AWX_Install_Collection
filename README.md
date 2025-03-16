@@ -116,6 +116,16 @@ Once the playbook completes, verify the AWX setup:
   kubectl get pods -n awx
   ```
 
+## SSL Cert Update
+
+- A default SSL cert (tls.crt) is created to enable HTTPS for the AWX server.
+- The default cert is located here:
+  ```sh
+  ls /admin_tools/awx-operator/awx-deploy/
+  ```
+
+
+
 ## License
 This project is licensed under the MIT License.
 
