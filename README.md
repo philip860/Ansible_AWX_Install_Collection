@@ -63,7 +63,7 @@ The following software components are used to complete the AWX standalone server
 - **AWX Operator**: Automates the deployment and management of AWX in Kubernetes.
   - Version: `2.19.1`
 - **K3s**: A lightweight Kubernetes distribution used to run AWX.
-  - Version: `v1.24.0+k3s1`
+  - Version: `v1.31.6+k3s1`
 - **Helm**: A package manager for Kubernetes, used to manage AWX deployment.
   - Version: `v3.10.3`
 - **PostgreSQL**: The database backend for AWX.
