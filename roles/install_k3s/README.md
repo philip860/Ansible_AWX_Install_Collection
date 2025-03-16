@@ -2,12 +2,12 @@
 
 ## Overview
 
-This Ansible role automates the setup and configuration of SSL certs for Nginx, and associated services to support AWX deployment within a Kubernetes environment. It ensures that SSL certs are set up correctly for Nginx.
+This Ansible role automates the setup and configuration of k3s, and associated services to support AWX deployment within a Kubernetes environment. 
 
 ## Key Functions
 
 
-- **Configure SSL Certificates**: Copies self-generated SSL certificates to the appropriate Nginx directories to enable secure HTTPS communication.
+- **Configure k3s**: Installs k3s software in order to provide a light-weight kubernetes env.
 
 
 ## Usage
@@ -17,7 +17,7 @@ This role should be executed as part of an AWX installation process where K3s is
 ## Documentation
 
 For more details on AWX installation and Kubernetes configuration, refer to:
-- [AWX Documentation](https://ansible.readthedocs.io/projects/awx/)
+- [AWX Documentation](https://ranchermanager.docs.rancher.com/getting-started/installation-and-upgrade/install-upgrade-on-a-kubernetes-cluster)
 
 
 ## License
