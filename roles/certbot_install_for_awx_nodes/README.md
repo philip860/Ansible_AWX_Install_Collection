@@ -7,7 +7,6 @@ This Ansible role automates the setup and configuration of SSL certs for Nginx, 
 ## Key Functions
 
 
-- **Install Necessary Packages**: Installs system dependencies such as Nginx, wget, tar, and jq.
 - **Configure SSL Certificates**: Copies self-generated SSL certificates to the appropriate Nginx directories to enable secure HTTPS communication.
 
 
