@@ -44,13 +44,13 @@ The playbook uses the following roles:
 The following software components are required for completing the AWX standalone server installation:
 
 - **AWX Operator**: Automates the deployment and management of AWX in Kubernetes.
-  - Version: `0.27.0`
+  - Version: `2.19.1`
 - **K3s**: A lightweight Kubernetes distribution used to run AWX.
   - Version: `v1.24.0+k3s1`
 - **Helm**: A package manager for Kubernetes, used to manage AWX deployment.
   - Version: `v3.10.3`
 - **PostgreSQL**: The database backend for AWX.
-  - Version: `13`
+  - Version: `15`
 
 ## Keynote: K3s and Ingress Configuration
 
