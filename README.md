@@ -173,8 +173,8 @@ Once the playbook completes, verify the AWX setup:
 ![Default login screen](screenshots/Default-Login-Screen.JPG)
 
 
-### 4. Successfully logged in - AWX GUI
-![Default login screen](screenshots/AWX-GUI.JPG)
+### 5. Successfully logged in - AWX GUI
+![AWX GUI](screenshots/AWX-GUI.JPG)
 
 
 ## License
