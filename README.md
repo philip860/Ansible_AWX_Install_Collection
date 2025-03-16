@@ -186,7 +186,7 @@ Image shows: what a user might see if they ran a 'kubectl get pods -n awx' while
 ### 3. AWX Web Browser Show Migration In Progress
 ![Web browser waiting for pods to initialize](https://raw.githubusercontent.com/philip860/Ansible_AWX_Install_Collection/main/screenshots/AWX-Server-Upgrade-Message.png)
 
-Image shows: what a user will see if they tried to access AWX-Server with a web browser before the pods finised initializing.
+Image shows: what a user will see if they tried to access AWX-Server with a web browser before the pods finished initializing.
 
 
 ### 4. Pods Finshed Initializing - Login Ready!
