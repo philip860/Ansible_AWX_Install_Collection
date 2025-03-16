@@ -127,7 +127,7 @@ ansible-playbook "$HOME/.ansible/collections/ansible_collections/philip860/awx_i
 
 If using prompts, remove `vars_prompt` comments before running.
 
-### 4. Verify the Installation
+### 6. Verify the Installation
 
 Once the playbook completes, verify the AWX setup:
 
