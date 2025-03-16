@@ -176,23 +176,28 @@ Once the playbook completes, verify the AWX setup:
 ### 1. Start of Installation and Variable Prompts
 ![Initial variable prompts](https://raw.githubusercontent.com/philip860/Ansible_AWX_Install_Collection/main/screenshots/AWX-Server-Install.png)
 
+Image shows: user prompts for the required informaton needed at the beginning of the installation process.
+
 ### 2. Pods Starting to Initialize
 ![Pods starting to initialize](https://raw.githubusercontent.com/philip860/Ansible_AWX_Install_Collection/main/screenshots/AWX-Server-Migration-Pod.png)
 
+Image shows: what a user might see if they ran a 'kubectl get pods -n awx' while the ansible-playbook is running the installation.
 
 ### 3. AWX Web Browser Show Migration In Progress
 ![Web browser waiting for pods to initialize](https://raw.githubusercontent.com/philip860/Ansible_AWX_Install_Collection/main/screenshots/AWX-Server-Upgrade-Message.png)
 
-Image shows: user prompts for the required informaton needed at the beginning of the installation process.
+Image shows: what a user will see if they tried to access AWX-Server with a web browser before the pods finised initializing.
 
 
 ### 4. Pods Finshed Initializing - Login Ready!
 ![Default login screen](https://raw.githubusercontent.com/philip860/Ansible_AWX_Install_Collection/main/screenshots/Default-Login-Screen.png)
 
+Image shows: Default AWX login screen accessible after the pods finised initializing.
 
 ### 5. Successfully logged in - AWX GUI
 ![AWX GUI](https://raw.githubusercontent.com/philip860/Ansible_AWX_Install_Collection/main/screenshots/AWX-GUI.png)
 
+Image shows: User logged into AWX server, via the admin user.
 
 
 ## Final Notes
