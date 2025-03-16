@@ -41,7 +41,7 @@ The playbook uses the following roles:
 
 ## Essential Software Components
 
-The following software components are required for completing the AWX standalone server installation:
+The following software components are used to complete the AWX standalone server installation:
 
 - **AWX Operator**: Automates the deployment and management of AWX in Kubernetes.
   - Version: `2.19.1`
