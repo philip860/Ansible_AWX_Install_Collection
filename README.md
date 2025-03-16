@@ -130,6 +130,8 @@ Once the playbook completes, verify the AWX setup:
   mv tls.key tls-old.key 
   cp -r /full_path/server.crt tls.crt
   cp -r /full_path/server.key tls.key
+ /usr/local/bin/kubectl apply -k awx-deploy
+ 
   ```
 
 
