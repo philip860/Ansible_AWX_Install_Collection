@@ -218,7 +218,7 @@ The following commands can help to shed some light on possible installation issu
   ```sh
   kubectl logs awx-operator-controller-manager-* -f -n awx
   ```
-
+Use the command "kubectl get pods -n awx" to get the full names of the pods because they are subject to change. 
 ## License
 This project is licensed under the MIT License.
 
