@@ -208,15 +208,15 @@ If any issues occur during the build, first check to make sure your system has e
 The following commands can help to shed some light on possible installation issues with AWX & Kubernetes.
 
 - Check list awx realted pods running for kubernetes:
-  ```sh
+  ```
   kubectl get pods -n awx
   ```
 - Show all related events for awx deployment in kubernetes:
-  ```sh
+  ```
   kubectl get events -n awx
   ```
 - Show all related information for the awx-operator-controller-manager pod:
-  ```sh
+  ```
   kubectl logs awx-operator-controller-manager-subject_to_change -f -n awx
   ```
 Use the command "kubectl get pods -n awx" to get the full names of the pods because they are subject to change. 
