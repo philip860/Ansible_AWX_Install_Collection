@@ -10,7 +10,7 @@ This is not a development AWX-server but a fully functionality install of a Ansi
 - A Linux-based server (Ubuntu, CentOS, RHEL)
 - Ansible installed on your local system
 - SSH access to the target server
-- Sufficient resources (minimum: 4 CPU cores, 8GB RAM, 20GB disk space)
+- Sufficient resources (minimum: 4 CPU cores, 8GB RAM, 80GB disk space - please make sure to have sufficent storage, or install may fail)
 - Internet access for package installations
 
 ## Playbook Details
