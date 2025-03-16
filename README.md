@@ -183,6 +183,8 @@ Once the playbook completes, verify the AWX setup:
 ### 3. AWX Web Browser Show Migration In Progress
 ![Web browser waiting for pods to initialize](https://raw.githubusercontent.com/philip860/Ansible_AWX_Install_Collection/main/screenshots/AWX-Server-Upgrade-Message.png)
 
+Image shows: user prompts for the required informaton needed at the beginning of the installation process.
+
 
 ### 4. Pods Finshed Initializing - Login Ready!
 ![Default login screen](https://raw.githubusercontent.com/philip860/Ansible_AWX_Install_Collection/main/screenshots/Default-Login-Screen.png)
