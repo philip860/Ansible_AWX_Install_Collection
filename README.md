@@ -153,9 +153,9 @@ Once the playbook completes, verify the AWX setup:
 
 - A default SSL cert (tls.crt) & key (tls.key), is created to enable HTTPS for the AWX server.
 - The default cert is located here:
-  ```sh
+```sh
   ls /admin_tools/awx-operator/awx-deploy/
-  ```
+```
 - To add your own custom SSL certs you will need to replace the default (tls.crt) & key (tls.key)
 ```sh
   cd /admin_tools/awx-operator/awx-deploy/
