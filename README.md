@@ -162,7 +162,7 @@ Once the playbook completes, verify the AWX setup:
 Screenshots of various points during the installation process:
 
 ```md
-![Initial variable prompts](./screenshots/AWX-Server-Install.JPG)
+![Initial variable prompts](https://github.com/philip860/Ansible_AWX_Install_Collection/blob/main/screenshots/AWX-Server-Install.JPG)
 ```
 
 
