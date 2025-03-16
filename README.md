@@ -192,6 +192,22 @@ Once the playbook completes, verify the AWX setup:
 ![AWX GUI](https://raw.githubusercontent.com/philip860/Ansible_AWX_Install_Collection/main/screenshots/AWX-GUI.png)
 
 
+
+## Final Notes
+Depending on your system's resources this installation can take anywhere from about 25mins to 45min to fully complete.
+
+If any issues occur during the build, first check to make sure your system has enough free storage available.
+
+The following command can help to shed some light on possible installation issues with AWX & Kubernetes
+
+  ```sh
+  kubectl get pods -n awx
+  ```
+
+  ```sh
+  kubectl get events -n awx
+  ```
+
 ## License
 This project is licensed under the MIT License.
 
