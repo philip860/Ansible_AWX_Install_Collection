@@ -45,7 +45,7 @@ The playbook uses the following roles:
 
 The following operating systems were tested with this AWX standalone server installation:
 
-- **RHEL**: Red Hat Enterprise Linux.
+Alternatively,
   - Version: `8/9`
 
 - **Centos**: Community ENTerprise Operating System.
@@ -96,7 +96,22 @@ Modify the `inventory.yml` file to include your target server details.
 
 Alternatively, you can define variables in `vars/main.yml` instead of using prompts.
 
-### 3. Run the Playbook
+### 4. Generate a Secure Password
+
+When the playbook runs you will be prompted to specify passwords for the following:
+
+- `awx_postgres_db_password`: Password for AWX PostgreSQL database
+- `secret_key`: Secret key for encrypting PostgreSQL database
+- `awx_admin_username_password`: AWX admin user password
+- `awx_user_password_var`: Password for the local AWX user
+
+You can generate random passwords using this command below:
+
+```sh
+date +%s | sha256sum | base64 | head -c 32 ; echo
+```
+
+### 5. Run the Playbook
 
 For repository installation, execute the playbook using:
 
