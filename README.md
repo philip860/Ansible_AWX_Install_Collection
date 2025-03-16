@@ -41,16 +41,20 @@ The playbook uses the following roles:
 
 ## Essential Software Components
 
-The following software components are used in this build of the AWX standalone server installation:
+The following software components are required for completing the AWX standalone server installation:
 
 - **AWX Operator**: Automates the deployment and management of AWX in Kubernetes.
-  - Version: `2.19.1`
+  - Version: `0.27.0`
 - **K3s**: A lightweight Kubernetes distribution used to run AWX.
   - Version: `v1.24.0+k3s1`
 - **Helm**: A package manager for Kubernetes, used to manage AWX deployment.
   - Version: `v3.10.3`
 - **PostgreSQL**: The database backend for AWX.
-  - Version: `15`
+  - Version: `13`
+
+## Keynote: K3s and Ingress Configuration
+
+By default, K3s installs the Traefik Ingress Controller, which uses strict DNS resolution. While this may be suitable for some environments, it can be restrictive in others. To ensure broader compatibility and improved functionality across various use cases, we have removed the Traefik Ingress Controller and instead set up an NGINX proxy. This provides greater flexibility in managing ingress traffic and enhances overall system performance.
 
 ## Installation Steps
 
