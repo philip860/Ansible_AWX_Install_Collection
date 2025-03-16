@@ -154,16 +154,14 @@ Once the playbook completes, verify the AWX setup:
   cp -r /admin_tools/awx-operator/awx-deploy/tls.crt /etc/nginx/certs/server.crt
   cp -r /admin_tools/awx-operator/awx-deploy/tls.key /etc/nginx/certs/server.key
   systemctl restart nginx
- ```
-
+  ```
 
 ## Installation Workflow
 
 Screenshots of various points during the installation process:
 
-```md
-![Initial variable prompts](https://github.com/philip860/Ansible_AWX_Install_Collection/blob/main/screenshots/AWX-Server-Install.JPG)
-```
+md
+![Initial variable prompts](./screenshots/AWX-Server-Install.JPG)
 
 
 ## License
