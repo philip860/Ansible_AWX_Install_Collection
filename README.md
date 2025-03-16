@@ -215,6 +215,10 @@ The following commands can help to shed some light on possible installation issu
   kubectl get events -n awx
   ```
 
+  ```sh
+  kubectl logs awx-operator-controller-manager-* -f -n awx
+  ```
+
 ## License
 This project is licensed under the MIT License.
 
