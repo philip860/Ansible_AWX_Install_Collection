@@ -165,6 +165,14 @@ Once the playbook completes, verify the AWX setup:
 ![Pods starting to initialize](screenshots/AWX-Server-Migration-Pod.JPG)
 
 
+### 3. AWX Web Browser Show Migration In Progress
+![Web browser waiting for pods to initialize](screenshots/AWX-Server-Upgrade-Message.JPG)
+
+
+### 4. Pod Finshed Initializing Showing Login Screen
+![Web browser waiting for pods to initialize](screenshots/Default-Login-Screen.JPG)
+
+
 ## License
 This project is licensed under the MIT License.
 
