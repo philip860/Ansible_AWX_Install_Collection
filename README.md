@@ -159,7 +159,7 @@ Once the playbook completes, verify the AWX setup:
 
 ## Installation Workflow
 
-Secreenshots of various points during the installation process:
+Screenshots of various points during the installation process:
 
 ```md
 ![Initial variable prompts](./screenshots/AWX-Server-Install.JPG)
