@@ -119,16 +119,11 @@
     executable: /bin/bash
 
 
-# - name: Copy Over Custom Nginx config_files to /etc/nginx/conf.d/awx-no-ssl.conf
-#   ansible.builtin.copy:
-#     src: "{{ role_path }}/files/awx-no-ssl.conf"
-#     dest: "/etc/nginx/conf.d/awx-no-ssl.conf"
+- name: Copy Over Custom awx-no-ssl-ubuntu.conf Nginx file to /etc/nginx/sites-available/default
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/awx-no-ssl-ubuntu.conf"
+    dest: "/etc/nginx/sites-available/default"
 
-
-# - name: Set Nginx SELinux Rule
-#   ansible.builtin.shell: "setsebool -P httpd_can_network_connect 1"
-#   args:
-#     executable: /bin/bash
 
 
 
