@@ -131,7 +131,7 @@ If using prompts, remove `vars_prompt` comments before running.
 
 Once the playbook completes, verify the AWX setup:
 
-- Access AWX via the web UI: `https://<server-ip>:<port>`
+- Access AWX via the web UI: `https://<server-ip>`
 - Log in with the admin credentials specified earlier.
 
 ## Troubleshooting
