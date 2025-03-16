@@ -130,9 +130,13 @@ Once the playbook completes, verify the AWX setup:
   mv tls.key tls-old.key 
   cp -r /full_path/server.crt tls.crt
   cp -r /full_path/server.key tls.key
- /usr/local/bin/kubectl apply -k awx-deploy
- 
-  ```
+  kubectl apply -k awx-deploy
+  kubectl create secret tls awx-secret-tls -n awx  --cert=/admin_tools/awx-operator/awx-deploy/tls.crt --key=/admin_tools/awx-operator/awx-deploy/tls.key  --dry-run=client -o yaml | kubectl apply -f - 
+  kubectl rollout restart deployment -n awx
+  cp -r /admin_tools/awx-operator/awx-deploy/tls.crt /etc/nginx/certs/server.crt
+  cp -r /admin_tools/awx-operator/awx-deploy/tls.key /etc/nginx/certs/server.key
+  systemctl restart nginx
+ ```
 
 
 ## License
