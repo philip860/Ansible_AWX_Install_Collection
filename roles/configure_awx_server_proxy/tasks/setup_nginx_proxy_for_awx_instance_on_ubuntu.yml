@@ -107,16 +107,22 @@
 
 
 
-- name: Copy Over Custom Nginx config_files to /etc/nginx/conf.d/awx-ssl.conf
+- name: Copy Over Custom Nginx config_files to /etc/nginx/sites-available/awx-ssl.conf
   ansible.builtin.template:
     src: "{{ role_path }}/files/awx-ssl.conf"
-    dest: "/etc/nginx/conf.d/awx-ssl.conf"
+    dest: "/etc/nginx/sites-available/awx-ssl.conf"
 
 
-- name: Copy Over Custom Nginx config_files to /etc/nginx/conf.d/awx-no-ssl.conf
-  ansible.builtin.copy:
-    src: "{{ role_path }}/files/awx-no-ssl.conf"
-    dest: "/etc/nginx/conf.d/awx-no-ssl.conf"
+- name: Set symbolic link for /etc/nginx/sites-available/
+  ansible.builtin.shell: "ln -s /etc/nginx/sites-available/awx-ssl.conf /etc/nginx/sites-enabled/"
+  args:
+    executable: /bin/bash
+
+
+# - name: Copy Over Custom Nginx config_files to /etc/nginx/conf.d/awx-no-ssl.conf
+#   ansible.builtin.copy:
+#     src: "{{ role_path }}/files/awx-no-ssl.conf"
+#     dest: "/etc/nginx/conf.d/awx-no-ssl.conf"
 
 
 # - name: Set Nginx SELinux Rule
